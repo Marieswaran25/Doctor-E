@@ -16,7 +16,7 @@
 
     @include tablet {
         width: 100% !important;
-        margin-top: 80px;
+        margin-top: 0px;
     }
     > .actions {
         @include flex-model(row, center, center, 1.5rem);

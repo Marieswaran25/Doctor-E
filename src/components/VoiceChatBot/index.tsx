@@ -1,7 +1,8 @@
 'use client';
 import './voiceChatBot.scss';
 
-import React, { use, useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react';
+import React, {  useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react';
+import { isBrowser } from 'react-device-detect';
 import { set } from 'react-hook-form';
 import toast, { Toaster } from 'react-hot-toast';
 import Disconnect from '@assets/icons/disconnect.svg';
@@ -17,9 +18,9 @@ import { StreamingAvatarSessionState, useInterrupt, useStreamingAvatarSession, u
 import { useCommonContext } from '@hooks/logic/commonContext';
 import { Button } from '@library/Button';
 import Typography from '@library/Typography';
+import { createHeygenToken } from '@services/api/createHeygenToken';
 import Image from 'next/image';
 
-import { createHeygenToken } from '@/app/services/api/createHeygenToken';
 import { CONVO_AGENT_ID, HEYGEN_AVATAR_ID, HEYGEN_KNOWLEDGE_ID } from '@/config';
 
 const DEFAULT_CONFIG: StartAvatarRequest = {
@@ -48,7 +49,7 @@ export const VoiceChatBot = () => {
     const { avatarRef, stream, startAvatar, stopAvatar, sessionState, sendMessageSync } = useStreamingAvatarSession();
     const { interrupt } = useInterrupt();
     const { startVoiceChat, stopVoiceChat, muteInputAudio, unmuteInputAudio } = useVoiceChat();
-    const { setSideBarOpen, setStreamed, isTablet } = useCommonContext();
+    const { setSideBarOpen, setStreamed } = useCommonContext();
 
     const conversations = useConversation({
         micMuted: muteMic,
@@ -67,23 +68,26 @@ export const VoiceChatBot = () => {
         },
         onDisconnect: async () => {
             try {
-                await stopAvatar();
-                await conversations.endSession();
-                stopVoiceChat();
+                if (sessionState === StreamingAvatarSessionState.CONNECTED) {
+                    await stopAvatar();
+                }
+            } catch {
+            } finally {
                 setSideBarOpen(false);
-                setConnectionEstablished(false);
                 setMessages([]);
+                stopVoiceChat();
                 setStreamed(false);
                 setTimeout(() => {
+                    setConnectionEstablished(false);
+
                     if (videoRef.current) {
                         videoRef.current.srcObject = null;
                     }
                     if (avatarRef.current) {
                         avatarRef.current = null;
                     }
-                    toast.success('Disconnected');
-                }, 100);
-            } catch {}
+                }, 10);
+            }
         },
         volume: 0,
     });
@@ -136,7 +140,7 @@ export const VoiceChatBot = () => {
                 setStreamed(true);
                 toast.success('Connected');
                 setTimeout(() => {
-                    if (!isTablet) {
+                    if (isBrowser) {
                         setSideBarOpen(true);
                     }
                 }, 100);
@@ -155,17 +159,18 @@ export const VoiceChatBot = () => {
         } finally {
             setSideBarOpen(false);
             setMessages([]);
-            setConnectionEstablished(false);
             stopVoiceChat();
             setStreamed(false);
             setTimeout(() => {
+                setConnectionEstablished(false);
+
                 if (videoRef.current) {
                     videoRef.current.srcObject = null;
                 }
                 if (avatarRef.current) {
                     avatarRef.current = null;
                 }
-            }, 100);
+            }, 10);
         }
     };
 
