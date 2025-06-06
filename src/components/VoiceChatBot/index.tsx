@@ -1,9 +1,8 @@
 'use client';
 import './voiceChatBot.scss';
 
-import React, {  useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react';
 import { isBrowser } from 'react-device-detect';
-import { set } from 'react-hook-form';
 import toast, { Toaster } from 'react-hot-toast';
 import Disconnect from '@assets/icons/disconnect.svg';
 import DrE from '@assets/icons/drE.webp';
@@ -32,9 +31,11 @@ const DEFAULT_CONFIG: StartAvatarRequest = {
     disableIdleTimeout: true,
 };
 
-const MemoizedChatBox = React.memo(({ messages, isWindowOpen }: { isWindowOpen: boolean; messages: Array<{ message: string; source: 'ai' | 'user' }> }) => {
-    return <Chatbox messages={messages} isWindowOpen={isWindowOpen} />;
-});
+const MemoizedChatBox = React.memo(
+    ({ messages, isWindowOpen, onMessage }: { isWindowOpen: boolean; messages: Array<{ message: string; source: 'ai' | 'user' }>; onMessage: (message: string) => void }) => {
+        return <Chatbox messages={messages} isWindowOpen={isWindowOpen} onMessage={onMessage} />;
+    },
+);
 MemoizedChatBox.displayName = 'MemoizedChatBox';
 export const VoiceChatBot = () => {
     const [muteMic, setMuteMic] = useState(false);
@@ -92,7 +93,7 @@ export const VoiceChatBot = () => {
         volume: 0,
     });
 
-    const { status, isSpeaking } = conversations;
+    const { status, isSpeaking, sendUserMessage } = conversations;
 
     useEffect(() => {
         if (scrollRef.current) {
@@ -191,6 +192,17 @@ export const VoiceChatBot = () => {
         return avatarRef.current && status === 'connected' && connectionEstablished;
     }, [avatarRef, status, connectionEstablished]);
 
+    const handleTextMessages = useCallback(
+        (message: string) => {
+            if (!message) return;
+            interrupt();
+            sendUserMessage(message);
+            setMessages(prev => [...prev, { message, source: 'user' }]);
+        },
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [sendUserMessage],
+    );
+
     return (
         <>
             <Toaster position="top-right" reverseOrder={false} />
@@ -236,7 +248,7 @@ export const VoiceChatBot = () => {
                 {isVideoStreamed && (
                     <div className="actions">
                         <div className="action-icons">
-                            <Button label="" backgroundColor="red" onClick={handleStop} leftIcon={Disconnect} backgroundColorOnHover="red" id="disconnect-btn" />
+                            <Button label="" backgroundColor="#651C18" onClick={handleStop} leftIcon={Disconnect} backgroundColorOnHover="red" id="disconnect-btn" />
                         </div>
                         <div className="action-icons">
                             <Button label="" backgroundColor={'#333537'} onClick={handleMute} leftIcon={!muteMic ? Unmute : Mute} backgroundColorOnHover="gray" id="mute-btn" />
@@ -244,7 +256,13 @@ export const VoiceChatBot = () => {
                     </div>
                 )}
             </section>
-            <MemoizedChatBox messages={messages} isWindowOpen={!!isVideoStreamed} />
+            <MemoizedChatBox
+                messages={messages}
+                isWindowOpen={!!isVideoStreamed}
+                onMessage={message => {
+                    handleTextMessages(message);
+                }}
+            />
         </>
     );
 };

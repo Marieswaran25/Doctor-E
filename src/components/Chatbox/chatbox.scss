@@ -3,29 +3,27 @@
 @use '@theme/common.module.scss' as *;
 
 .transcription {
-    width: 400px;
-    height: 100%;
-    max-height: 100%;
-    overflow-y: auto;
-    border-left: 1px solid #e9eef6;
-    scroll-behavior: smooth;
-    transition: all 0.3s ease;
     position: fixed;
     top: 0;
     right: 0;
-    z-index: 2;
+    bottom: 0;
+    width: 400px;
     background-color: white;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
+    z-index: 2;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+
+    &.close,
     &.none {
         right: -400px;
     }
-    &.close {
-        right: -400px;
-    }
+
     @include tablet {
-        width: 280px;
-        right: 0;
+        width: 300px;
         &.close {
-            right: -280px;
+            right: -300px;
         }
     }
     > .banner {
@@ -33,13 +31,17 @@
         top: 0;
         left: 0;
         z-index: 1;
-        background-color: #e9eef6;
         width: 100%;
+        height: 102px;
         padding: 1rem;
+        background-color: #4f6b7e;
+        border-bottom: 1px solid #658192;
         @include flex-model(row, center, space-between, 0rem);
         > p {
             color: white;
             text-align: center;
+            align-self: center;
+            margin: auto;
         }
         > svg {
             width: 35px;
@@ -47,16 +49,26 @@
             border-radius: 50%;
             cursor: pointer;
             padding: 0.5rem;
+            > path {
+                fill: white;
+            }
             &:hover {
-                background-color: #d2d4e3;
+                background-color: #658192;
             }
         }
     }
 
     > .messages-list {
-        @include flex-model(column, flex-start, flex-start, 0.75rem);
+        max-height: 100%;
+        flex: 1;
+        overflow-y: auto;
         padding: 1rem;
         background-color: white;
+        scroll-behavior: smooth;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
 
         > .message-wrapper {
             padding: 0.75rem 1rem;
@@ -68,17 +80,28 @@
             animation: fadeInUp 0.3s ease forwards;
 
             &.ai {
-                background-color: $B1;
+                background-color: #658192;
                 align-self: flex-start;
-                color: black;
+                color: white;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
             }
 
             &.user {
                 background-color: white;
                 align-self: flex-end;
-                border: 1px solid #ccc;
+                border: 1px solid #254156;
                 color: #333;
             }
         }
+    }
+
+    > .input-box {
+        padding: 0.7rem;
+        background-color: white;
+        position: sticky;
+        bottom: 0;
+        left: 0;
+        z-index: 1;
+        width: 100%;
     }
 }

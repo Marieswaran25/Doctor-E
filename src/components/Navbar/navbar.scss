@@ -10,17 +10,18 @@
     position: fixed;
     top: 0;
     left: 0;
-    background-color: white;
+    background: linear-gradient(45deg, #c6d6de 0%, #658192 50%, #254156 100%);
     z-index: 1;
 
     > .navbar-container {
         padding: 0.5rem 3rem;
         @include flex-model(row, center, space-between, 0rem);
         width: 100%;
-        > h1 {
-            @include mobile {
-                font-size: 2.2rem;
-            }
+        > img {
+            width: 100px;
+            height: 100%;
+            align-self: center;
+            margin: auto;
         }
         > svg {
             width: 40px;

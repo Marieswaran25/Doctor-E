@@ -43,11 +43,10 @@
         @include flex-model(column, center, center, 0);
         > video {
             width: 60%;
-            border-radius: 1rem;
+            border-radius: 30px;
             padding: 1rem;
-
             object-fit: contain;
-
+            border: none;
             @include tablet {
                 width: 100%;
             }

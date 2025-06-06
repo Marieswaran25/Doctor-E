@@ -1,0 +1,25 @@
+@use '@theme/colors.module.scss' as *;
+@use '@theme/viewport.scss' as *;
+@use '@theme/common.module.scss' as *;
+@use '@theme/gradient.module.scss' as *;
+
+.messenger {
+    @include flex-model(row, center, space-between, 1rem);
+    > input {
+        height: 50px;
+        border-radius: 100px;
+        border: 1px solid #254156;
+        padding: 0.5rem;
+        width: 100%;
+        padding-left: 1rem;
+        color: #254156;
+    }
+    > button {
+        width: 25px;
+        @include flex-model(column, center, center, 0);
+        > svg {
+            width: 20px;
+            height: 20px;
+        }
+    }
+}
