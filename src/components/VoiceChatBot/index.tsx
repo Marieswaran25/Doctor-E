@@ -29,6 +29,12 @@ const DEFAULT_CONFIG: StartAvatarRequest = {
     language: 'en',
     voiceChatTransport: VoiceChatTransport.WEBSOCKET,
     disableIdleTimeout: true,
+    voice: {
+        elevenlabsSettings: {
+            similarity_boost: 1,
+            stability: 0.2,
+        },
+    },
 };
 
 const MemoizedChatBox = React.memo(
@@ -148,11 +154,11 @@ export const VoiceChatBot = () => {
             } catch (err: any) {
                 toast.error(err?.message || 'Failed to start session');
                 setConnectionEstablished(false);
+                avatarRef.current = null;
             }
         });
     };
-
-    const handleStop = async () => {
+    const handleStop = useCallback(async () => {
         try {
             await Promise.all([conversations.endSession(), stopAvatar()]);
         } catch (err) {
@@ -173,7 +179,8 @@ export const VoiceChatBot = () => {
                 }
             }, 10);
         }
-    };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const handleMute = useCallback(() => {
         setMuteMic(prev => !prev);

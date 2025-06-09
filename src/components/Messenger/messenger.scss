@@ -6,7 +6,7 @@
 .messenger {
     @include flex-model(row, center, space-between, 1rem);
     > input {
-        height: 50px;
+        height: 45px;
         border-radius: 100px;
         border: 1px solid #254156;
         padding: 0.5rem;

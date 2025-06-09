@@ -1,0 +1,24 @@
+@use '@theme/colors.module.scss' as *;
+@use '@theme/viewport.scss' as *;
+@use '@theme/common.module.scss' as *;
+@use '@theme/gradient.module.scss' as *;
+
+.sticky-chat {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+    background-color: #4f6b7e;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    @include flex-model(column, center, center, 0);
+    > svg {
+        width: 40px;
+        height: 40px;
+        cursor: pointer;
+        padding: 0.5rem;
+    }
+}
