@@ -28,7 +28,6 @@ const DEFAULT_CONFIG: StartAvatarRequest = {
     avatarName: HEYGEN_AVATAR_ID,
     language: 'en',
     voiceChatTransport: VoiceChatTransport.WEBSOCKET,
-    disableIdleTimeout: true,
     voice: {
         elevenlabsSettings: {
             similarity_boost: 1,
@@ -75,9 +74,9 @@ export const VoiceChatBot = () => {
         },
         onDisconnect: async () => {
             try {
-                if (sessionState === StreamingAvatarSessionState.CONNECTED) {
-                    await stopAvatar();
-                }
+                console.log('Disconnecting');
+                await stopAvatar();
+                console.log('Disconnected');
             } catch {
             } finally {
                 setSideBarOpen(false);
@@ -127,7 +126,7 @@ export const VoiceChatBot = () => {
             if (status === 'connected') {
                 try {
                     await conversations.endSession();
-                } catch {}
+                } catch { }
             }
 
             if (sessionState === StreamingAvatarSessionState.CONNECTED) {
