@@ -15,16 +15,16 @@ import { getAudioStream } from '@helpers/getMediaStream';
 import { AvatarQuality, StartAvatarRequest, VoiceChatTransport } from '@heygen/streaming-avatar';
 import { StreamingAvatarSessionState, useInterrupt, useStreamingAvatarSession, useVoiceChat } from '@hooks/logic';
 import { useCommonContext } from '@hooks/logic/commonContext';
+import { useTextChat } from '@hooks/logic/useTextChat';
 import { Button } from '@library/Button';
 import Typography from '@library/Typography';
 import { createHeygenToken } from '@services/api/createHeygenToken';
 import Image from 'next/image';
 
-import { CONVO_AGENT_ID, HEYGEN_AVATAR_ID, HEYGEN_KNOWLEDGE_ID } from '@/config';
+import { CONVO_AGENT_ID, HEYGEN_AVATAR_ID } from '@/config';
 
 const DEFAULT_CONFIG: StartAvatarRequest = {
     quality: AvatarQuality.High,
-    knowledgeId: HEYGEN_KNOWLEDGE_ID,
     avatarName: HEYGEN_AVATAR_ID,
     language: 'en',
     voiceChatTransport: VoiceChatTransport.WEBSOCKET,
@@ -52,9 +52,10 @@ export const VoiceChatBot = () => {
     const [messages, setMessages] = useState<Array<{ message: string; source: 'ai' | 'user' }>>([]);
     const [isLoading, startTrxn] = useTransition();
 
-    const { avatarRef, stream, startAvatar, stopAvatar, sessionState, sendMessageSync } = useStreamingAvatarSession();
+    const { avatarRef, stream, startAvatar, stopAvatar, sessionState } = useStreamingAvatarSession();
     const { interrupt } = useInterrupt();
     const { startVoiceChat, stopVoiceChat, muteInputAudio, unmuteInputAudio } = useVoiceChat();
+    const { repeatMessageSync } = useTextChat();
     const { setSideBarOpen, setStreamed } = useCommonContext();
 
     const conversations = useConversation({
@@ -63,7 +64,7 @@ export const VoiceChatBot = () => {
         onMessage: async msg => {
             if (msg.source === 'ai' && avatarRef.current) {
                 try {
-                    await sendMessageSync(msg.message);
+                    await repeatMessageSync(msg.message);
                 } catch (e: any) {
                     toast.error(e?.message || 'Failed to connect');
                 }
@@ -135,7 +136,6 @@ export const VoiceChatBot = () => {
 
             try {
                 const token = await createHeygenToken();
-                console.log('token', token);
                 await startAvatar(DEFAULT_CONFIG, token);
                 setConnectionEstablished(true);
 

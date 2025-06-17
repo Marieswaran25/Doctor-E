@@ -20,11 +20,13 @@ body {
     -moz-tap-highlight-color: transparent;
     -o-tap-highlight-color: transparent;
     background-color: white;
+
     &.menu-opened {
         @include tablet {
             overflow: hidden;
         }
     }
+
     svg {
         overflow: inherit;
     }
@@ -38,18 +40,64 @@ a {
 input,
 button {
     border: none;
-    font-family: 'Roboto' !important;
+    font-family: 'Poppins' !important;
 }
+
 input,
 textarea {
-    font-family: 'Roboto' !important;
+    font-family: 'Poppins' !important;
     padding-left: 2.3rem;
     font-size: 1rem;
     font-weight: 400 !important;
     outline: none;
     border: none;
+
     &::placeholder,
     &::-webkit-input-placeholder {
-        font-family: 'Roboto' !important;
+        font-family: 'Poppins' !important;
+        font-size: 0.9rem;
+    }
+}
+
+.swipe-btn {
+    border-radius: 10rem;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    width: 100%;
+    margin-top: 1rem;
+
+    &:after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #658192;
+        border-radius: 10rem;
+        z-index: -2;
+    }
+
+    &:before {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0%;
+        height: 100%;
+        background-color: darken(#658192, 15%);
+        transition: all 0.3s;
+        border-radius: 10rem;
+        z-index: -1;
+    }
+
+    &:hover {
+        color: #fff;
+
+        &:before {
+            width: 100%;
+        }
     }
 }
