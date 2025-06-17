@@ -1,0 +1,62 @@
+@use '@theme/colors.module.scss' as *;
+@use '@theme/viewport.scss' as *;
+@use '@theme/common.module.scss' as *;
+@use '@theme/gradient.module.scss' as *;
+
+.bottom-arrows {
+    @include flex-model(row, flex-end, flex-end, 0.5rem);
+    flex-shrink: 0;
+    width: 25%;
+
+    @include tablet {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 100%;
+        justify-content: space-between;
+        padding: 0.5rem;
+    }
+
+    .arrow-button {
+        background-color: transparent;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &:hover {
+            border: 1px solid #254156;
+
+            @include tablet {
+                backdrop-filter: blur(0.5px);
+
+                > svg {
+                    > path {
+                        fill: #254156;
+                    }
+                }
+            }
+        }
+
+        @include tablet {
+            border: 1px solid white;
+        }
+
+        svg {
+            width: 20px;
+            height: 20px;
+
+            > path {
+                fill: #254156;
+
+                @include tablet {
+                    fill: white;
+                }
+            }
+        }
+    }
+}

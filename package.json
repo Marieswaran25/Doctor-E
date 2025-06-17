@@ -27,7 +27,9 @@
         "react-hook-form": "^7.54.2",
         "react-hot-toast": "^2.5.2",
         "react-redux": "^9.2.0",
+        "react-slick": "^0.30.3",
         "sass": "^1.86.0",
+        "slick-carousel": "^1.8.1",
         "yup": "^1.6.1"
     },
     "devDependencies": {
@@ -36,6 +38,7 @@
         "@types/node": "^20",
         "@types/react": "^19",
         "@types/react-dom": "^19",
+        "@types/react-slick": "^0.23.13",
         "eslint": "^9",
         "eslint-config-next": "15.2.4",
         "eslint-config-prettier": "^10.0.1",

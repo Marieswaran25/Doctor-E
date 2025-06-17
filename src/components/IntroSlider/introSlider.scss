@@ -1,0 +1,18 @@
+@use '@theme/colors.module.scss' as *;
+@use '@theme/viewport.scss' as *;
+@use '@theme/common.module.scss' as *;
+@use '@theme/gradient.module.scss' as *;
+
+.intro-app {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100%;
+    position: relative;
+    cursor: pointer;
+
+    > .intro-card {
+        width: 100%;
+        text-align: center;
+    }
+}

@@ -1,14 +1,17 @@
 @use '@theme/colors.module.scss' as *;
+
 .typography {
     display: flex;
     flex-direction: row;
     align-items: center;
-    font-family: 'Roboto' !important;
+    font-family: 'Poppins' !important;
+
     img {
         height: auto;
         width: auto;
         margin-left: 0.4rem;
     }
+
     svg {
         margin-left: 0.4rem;
     }
@@ -25,7 +28,7 @@
 }
 
 .p3 {
-    font-size: 1.05rem;
+    font-size: 1rem;
     line-height: 19.6px;
 }
 
