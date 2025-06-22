@@ -6,7 +6,7 @@ interface Process {
         NEXT_PUBLIC_HEYGEN_API_KEY: string;
         NEXT_PUBLIC_HEYGEN_KNOWLEDGE_ID: string;
         NEXT_PUBLIC_HEYGEN_AVATAR_ID: string;
-        OPENAI_API_KEY: string;
+        NEXT_PUBLIC_OPENAI_API_KEY: string;
     };
 }
 declare const process: Process;
