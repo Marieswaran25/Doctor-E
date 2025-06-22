@@ -5,6 +5,7 @@
 
 .messenger {
     @include flex-model(row, center, space-between, 1rem);
+
     > input {
         height: 45px;
         border-radius: 100px;
@@ -14,12 +15,80 @@
         padding-left: 1rem;
         color: #254156;
     }
+
     > button {
         width: 25px;
         @include flex-model(column, center, center, 0);
+
         > svg {
             width: 20px;
             height: 20px;
         }
     }
+}
+
+.attachment {
+    width: 20px;
+    height: 20px;
+    @include flex-model(column, center, center, 0);
+    position: relative;
+    cursor: pointer !important;
+
+    > svg {
+        width: 20px;
+        height: 20px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        cursor: pointer;
+    }
+
+    > input {
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+}
+
+.attached-images {
+    @include flex-model(row, center, flex-start, 0.5rem);
+    margin-bottom: 0.4rem;
+    flex-wrap: wrap;
+
+    > .image {
+        position: relative;
+
+        > img {
+            width: 70px;
+            height: 70px;
+            border-radius: 10px;
+            object-fit: cover;
+            border: 1px solid $SilveringGray;
+        }
+
+        > svg {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            padding: 0.2rem;
+            background-color: $B1;
+            cursor: pointer;
+        }
+    }
+}
+
+#thinking {
+    width: 100%;
+    border-radius: 10px;
+    padding: 0.7rem;
+    background-color: $B1;
+    text-align: left;
+    padding-left: 1rem;
+    margin-bottom: 0.5rem;
 }

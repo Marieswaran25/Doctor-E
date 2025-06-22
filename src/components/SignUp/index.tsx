@@ -5,6 +5,7 @@ import colors from '@theme/colors.module.scss';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import Google from '@assets/icons/google.svg';
+import { ROUTES } from '@constants/routes';
 import { stylize } from '@functions/stylize';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Button } from '@library/Button';
@@ -13,7 +14,6 @@ import Typography from '@library/Typography';
 import { View } from '@library/View';
 import { signUpSchema } from '@utils/schema';
 import * as yup from 'yup';
-import { ROUTES } from '@constants/routes';
 
 export const SignUp: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
     const {
@@ -23,16 +23,15 @@ export const SignUp: React.FC<{ children?: React.ReactNode }> = ({ children }) =
         reset,
     } = useForm<yup.InferType<typeof signUpSchema>>({
         resolver: yupResolver(signUpSchema),
-        mode: 'onChange'
+        mode: 'onChange',
     });
     const [isLoading, startTransition] = React.useTransition();
-
 
     const onSubmit = handleSubmit(async data => {
         startTransition(async () => {
             console.log(data);
             reset();
-        })
+        });
     });
     return (
         <View className="signup-container" as={'section'}>

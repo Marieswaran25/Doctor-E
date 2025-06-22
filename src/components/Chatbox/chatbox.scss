@@ -29,6 +29,7 @@
         width: 85%;
         right: 1rem;
     }
+
     > .banner {
         position: sticky;
         top: 0;
@@ -40,21 +41,25 @@
         background-color: #4f6b7e;
         border-bottom: 1px solid #658192;
         @include flex-model(row, center, space-between, 0rem);
+
         > p {
             color: white;
             text-align: center;
             align-self: center;
             margin: auto;
         }
+
         > svg {
             width: 35px;
             height: 35px;
             border-radius: 50%;
             cursor: pointer;
             padding: 0.5rem;
+
             > path {
                 fill: white;
             }
+
             &:hover {
                 background-color: #658192;
             }
@@ -95,10 +100,29 @@
                 border: 1px solid #254156;
                 color: #333;
             }
+
+            > .message-attachment-wrapper {
+                width: 100%;
+                @include flex-model(column, flex-start, flex-start, 0.5rem);
+
+                > .attached-images {
+                    width: 100%;
+                    @include flex-model(row, center, flex-start, 0.5rem);
+                    flex-wrap: wrap;
+
+                    > img {
+                        width: 70px;
+                        height: 70px;
+                        border-radius: 10px;
+                        border: 1px solid $SilveringGray;
+                        object-fit: cover;
+                    }
+                }
+            }
         }
     }
 
-    > .input-box {
+    > .chat-box {
         padding: 0.7rem;
         background-color: white;
         position: sticky;

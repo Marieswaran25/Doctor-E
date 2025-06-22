@@ -10,6 +10,7 @@
     padding: 1rem;
     transition: all 0.3s ease;
     margin-top: 80px;
+
     &.open {
         width: calc(100% - 400px);
     }
@@ -18,6 +19,7 @@
         width: 100% !important;
         margin-top: 0px;
     }
+
     > .actions {
         @include flex-model(row, center, center, 1.5rem);
 
@@ -41,16 +43,47 @@
 
     > .bot-left {
         @include flex-model(column, center, center, 0);
+        position: relative;
+
         > video {
             width: 60%;
             border-radius: 30px;
             padding: 1rem;
             object-fit: contain;
             border: none;
+            transition: 0.5s all ease-in-out;
+
             @include tablet {
                 width: 100%;
             }
         }
+
+        > .status-wrapper {
+            position: absolute;
+            top: 10%;
+            left: 25%;
+            backdrop-filter: blur(16px);
+            border: 1px solid white;
+            padding: 0.3rem 0.5rem;
+            border-radius: 100px;
+            @include flex-model(row, center, flex-start, 0.3rem);
+
+            @include mobile {
+                left: 10%;
+            }
+
+            > .status-dot {
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
+            }
+
+            > p {
+                text-align: center;
+                font-size: 10px;
+            }
+        }
+
         .initial-placeholder {
             width: 100%;
             position: relative;
@@ -71,6 +104,7 @@
                     width: 100%;
                 }
             }
+
             .circular-placeholder-overlay {
                 position: absolute;
                 bottom: 0;
@@ -81,6 +115,7 @@
                 border-radius: 10px;
                 transition: background-color 0.5s ease-in-out;
                 cursor: pointer;
+
                 &:hover {
                     background-color: rgba(0, 0, 0, 0.418);
                 }
@@ -103,9 +138,11 @@
     0% {
         background-position: 0% 50%;
     }
+
     50% {
         background-position: 100% 50%;
     }
+
     100% {
         background-position: 0% 50%;
     }

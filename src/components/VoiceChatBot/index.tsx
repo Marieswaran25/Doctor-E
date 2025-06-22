@@ -15,6 +15,8 @@ import { getAudioStream } from '@helpers/getMediaStream';
 import { AvatarQuality, StartAvatarRequest, VoiceChatTransport } from '@heygen/streaming-avatar';
 import { StreamingAvatarSessionState, useInterrupt, useStreamingAvatarSession, useVoiceChat } from '@hooks/logic';
 import { useCommonContext } from '@hooks/logic/commonContext';
+import { MessageAttachments, useStreamingAvatarContext } from '@hooks/logic/context';
+import { useConversationMessages } from '@hooks/logic/useConversationMessage';
 import { useTextChat } from '@hooks/logic/useTextChat';
 import { Button } from '@library/Button';
 import Typography from '@library/Typography';
@@ -22,6 +24,7 @@ import { createHeygenToken } from '@services/api/createHeygenToken';
 import Image from 'next/image';
 
 import { CONVO_AGENT_ID, HEYGEN_AVATAR_ID } from '@/config';
+// import { DefaultPrompts } from '@components/DefaultPrompts';
 
 const DEFAULT_CONFIG: StartAvatarRequest = {
     quality: AvatarQuality.High,
@@ -36,12 +39,33 @@ const DEFAULT_CONFIG: StartAvatarRequest = {
     },
 };
 
+// const DEFAULT_PROMPTS: string[] = [
+//     'Can you explain common dental issues to me?',
+//     'Can you explain dental implants to me?',
+//     'Can you explain dental care to me?',
+// ]
+
 const MemoizedChatBox = React.memo(
-    ({ messages, isWindowOpen, onMessage }: { isWindowOpen: boolean; messages: Array<{ message: string; source: 'ai' | 'user' }>; onMessage: (message: string) => void }) => {
-        return <Chatbox messages={messages} isWindowOpen={isWindowOpen} onMessage={onMessage} />;
+    ({
+        isWindowOpen,
+        children,
+        onMessage,
+        onContextualUpdate,
+    }: {
+        isWindowOpen: boolean;
+        children?: React.ReactNode;
+        onContextualUpdate: (m: string) => void;
+        onMessage: (message: string, attachments?: MessageAttachments) => void;
+    }) => {
+        return (
+            <Chatbox isWindowOpen={isWindowOpen} onMessage={onMessage} onContextualUpdate={onContextualUpdate}>
+                {children}
+            </Chatbox>
+        );
     },
 );
 MemoizedChatBox.displayName = 'MemoizedChatBox';
+
 export const VoiceChatBot = () => {
     const [muteMic, setMuteMic] = useState(false);
     const scrollRef = useRef<HTMLDivElement | null>(null);
@@ -49,14 +73,16 @@ export const VoiceChatBot = () => {
     const { sideBarOpen } = useCommonContext();
 
     const [connectionEstablished, setConnectionEstablished] = useState(false);
-    const [messages, setMessages] = useState<Array<{ message: string; source: 'ai' | 'user' }>>([]);
+    const { conversationMessages: messages, setConversationMessages: setMessages } = useConversationMessages();
     const [isLoading, startTrxn] = useTransition();
 
     const { avatarRef, stream, startAvatar, stopAvatar, sessionState } = useStreamingAvatarSession();
     const { interrupt } = useInterrupt();
     const { startVoiceChat, stopVoiceChat, muteInputAudio, unmuteInputAudio } = useVoiceChat();
+    const { isAvatarTalking } = useStreamingAvatarContext();
     const { repeatMessageSync } = useTextChat();
     const { setSideBarOpen, setStreamed } = useCommonContext();
+    const [isThinking, setIsThinking] = useState(false);
 
     const conversations = useConversation({
         micMuted: muteMic,
@@ -64,11 +90,14 @@ export const VoiceChatBot = () => {
         onMessage: async msg => {
             if (msg.source === 'ai' && avatarRef.current) {
                 try {
+                    if (!isThinking) setIsThinking(true);
                     await repeatMessageSync(msg.message);
+                    setIsThinking(false);
                 } catch (e: any) {
                     toast.error(e?.message || 'Failed to connect');
                 }
             } else {
+                setIsThinking(true);
                 interrupt();
             }
             setMessages(prev => [...prev, msg]);
@@ -84,6 +113,8 @@ export const VoiceChatBot = () => {
                 setMessages([]);
                 stopVoiceChat();
                 setStreamed(false);
+                setMuteMic(false);
+                setIsThinking(false);
                 setTimeout(() => {
                     setConnectionEstablished(false);
 
@@ -99,7 +130,11 @@ export const VoiceChatBot = () => {
         volume: 0,
     });
 
-    const { status, isSpeaking, sendUserMessage } = conversations;
+    const { status, isSpeaking, sendUserMessage, sendContextualUpdate, sendUserActivity } = conversations;
+
+    const isVideoStreamed = useMemo(() => {
+        return avatarRef.current && status === 'connected' && connectionEstablished;
+    }, [avatarRef, status, connectionEstablished]);
 
     useEffect(() => {
         if (scrollRef.current) {
@@ -127,7 +162,7 @@ export const VoiceChatBot = () => {
             if (status === 'connected') {
                 try {
                     await conversations.endSession();
-                } catch { }
+                } catch {}
             }
 
             if (sessionState === StreamingAvatarSessionState.CONNECTED) {
@@ -164,6 +199,8 @@ export const VoiceChatBot = () => {
             toast.error('Failed to stop session');
         } finally {
             setSideBarOpen(false);
+            setMuteMic(false);
+            setIsThinking(false);
             setMessages([]);
             stopVoiceChat();
             setStreamed(false);
@@ -194,21 +231,6 @@ export const VoiceChatBot = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [muteInputAudio, unmuteInputAudio]);
 
-    const isVideoStreamed = useMemo(() => {
-        return avatarRef.current && status === 'connected' && connectionEstablished;
-    }, [avatarRef, status, connectionEstablished]);
-
-    const handleTextMessages = useCallback(
-        (message: string) => {
-            if (!message) return;
-            interrupt();
-            sendUserMessage(message);
-            setMessages(prev => [...prev, { message, source: 'user' }]);
-        },
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        [sendUserMessage],
-    );
-
     return (
         <>
             <Toaster position="top-right" reverseOrder={false} />
@@ -223,6 +245,13 @@ export const VoiceChatBot = () => {
                     >
                         <track kind="captions" />
                     </video>
+
+                    {isVideoStreamed && (
+                        <div className="status-wrapper">
+                            {<div style={{ backgroundColor: isAvatarTalking ? 'green' : isThinking ? 'orange' : 'red' }} className="status-dot" />}
+                            {<Typography type={'caption'} weight={'light'} text={isAvatarTalking ? 'Speaking...' : isThinking ? 'Thinking...' : 'Listening...'} as="p" color="black" />}
+                        </div>
+                    )}
 
                     {!isVideoStreamed && (
                         <div className="initial-placeholder">
@@ -263,12 +292,18 @@ export const VoiceChatBot = () => {
                 )}
             </section>
             <MemoizedChatBox
-                messages={messages}
                 isWindowOpen={!!isVideoStreamed}
-                onMessage={message => {
-                    handleTextMessages(message);
+                onMessage={(m, attachments) => {
+                    setIsThinking(true);
+                    interrupt();
+                    sendUserMessage(m);
+                    setMessages(prev => [...prev, { message: m, attachments, source: 'user' }]);
                 }}
-            />
+                onContextualUpdate={m => {
+                    sendContextualUpdate(m);
+                    sendUserActivity();
+                }}
+            ></MemoizedChatBox>
         </>
     );
 };

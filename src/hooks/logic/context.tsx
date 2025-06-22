@@ -18,6 +18,12 @@ export interface Message {
     sender: MessageSender;
     content: string;
 }
+export interface MessageAttachments {
+    count: number;
+    type: 'image';
+    prompt: string;
+    files?: File[];
+}
 
 type StreamingAvatarContextProps = {
     avatarRef: React.MutableRefObject<StreamingAvatar | null>;
@@ -50,6 +56,13 @@ type StreamingAvatarContextProps = {
 
     connectionQuality: ConnectionQuality;
     setConnectionQuality: (connectionQuality: ConnectionQuality) => void;
+
+    conversationMessages: {
+        source: 'ai' | 'user';
+        message: string;
+        attachments?: MessageAttachments;
+    }[];
+    setConversationMessages: React.Dispatch<React.SetStateAction<{ source: 'ai' | 'user'; message: string; attachments?: MessageAttachments }[]>>;
 };
 
 const StreamingAvatarContext = React.createContext<StreamingAvatarContextProps>({
@@ -77,6 +90,8 @@ const StreamingAvatarContext = React.createContext<StreamingAvatarContextProps>(
     setIsAvatarTalking: () => {},
     connectionQuality: ConnectionQuality.UNKNOWN,
     setConnectionQuality: () => {},
+    conversationMessages: [],
+    setConversationMessages: () => {},
 });
 
 const useStreamingAvatarSessionState = () => {
@@ -194,6 +209,12 @@ const useStreamingAvatarConnectionQualityState = () => {
     return { connectionQuality, setConnectionQuality };
 };
 
+const useStreamingConvesationMessages = () => {
+    const [conversationMessages, setConversationMessages] = useState<{ source: 'ai' | 'user'; message: string; attachments?: MessageAttachments }[]>([]);
+
+    return { conversationMessages, setConversationMessages };
+};
+
 export const StreamingAvatarProvider = ({ children, basePath }: { children: React.ReactNode; basePath?: string }) => {
     const avatarRef = React.useRef<StreamingAvatar>(null);
     const voiceChatState = useStreamingAvatarVoiceChatState();
@@ -202,6 +223,7 @@ export const StreamingAvatarProvider = ({ children, basePath }: { children: Reac
     const listeningState = useStreamingAvatarListeningState();
     const talkingState = useStreamingAvatarTalkingState();
     const connectionQualityState = useStreamingAvatarConnectionQualityState();
+    const conversationMessagesState = useStreamingConvesationMessages();
 
     return (
         <StreamingAvatarContext.Provider
@@ -214,6 +236,7 @@ export const StreamingAvatarProvider = ({ children, basePath }: { children: Reac
                 ...listeningState,
                 ...talkingState,
                 ...connectionQualityState,
+                ...conversationMessagesState,
             }}
         >
             {children}

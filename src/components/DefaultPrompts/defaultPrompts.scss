@@ -1,0 +1,30 @@
+@use '@theme/colors.module.scss' as *;
+@use '@theme/viewport.scss' as *;
+@use '@theme/common.module.scss' as *;
+@use '@theme/gradient.module.scss' as *;
+
+.default-prompts-wrapper {
+    @include flex-model(column, flex-start, flex-start, 1rem);
+    margin-top: 1rem;
+
+    > .default-prompt {
+        @include flex-model(row, center, flex-start, 0.5rem);
+        padding: 1rem;
+        border-radius: 10px;
+        border: 1px solid #254156;
+        cursor: pointer;
+
+        > svg {
+            width: 20px;
+            height: 30px;
+        }
+
+        &:hover {
+            border: 1px solid #658192 !important;
+
+            > p {
+                color: #254156 !important;
+            }
+        }
+    }
+}
