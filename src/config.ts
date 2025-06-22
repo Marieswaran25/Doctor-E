@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import Openai from 'openai';
 
 export const CONVO_AGENT_ID = process.env.NEXT_PUBLIC_CONVO_AGENT_ID;
@@ -11,7 +11,3 @@ export const HEYGEN_AVATAR_ID = process.env.NEXT_PUBLIC_HEYGEN_AVATAR_ID;
 
 export const OPEN_AI_KEY = process.env.NEXT_PUBLIC_OPENAI_API_KEY;
 
-export const openAIClient = new Openai({
-    apiKey: OPEN_AI_KEY,
-    dangerouslyAllowBrowser: true,
-});

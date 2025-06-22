@@ -8,10 +8,11 @@ import { MessageAttachments } from '@hooks/logic/context';
 import { Button } from '@library/Button';
 import Typography from '@library/Typography';
 
-import { openAIClient } from '@/config';
 
 import { AttachedImages } from './AttachedImages';
 import { Attachment } from './Attachment';
+import { OPEN_AI_KEY } from '@/config';
+import OpenAI from 'openai';
 
 export const Messenger = React.memo(({ onMessage, onContextualUpdate }: { onContextualUpdate: (message: string) => void; onMessage: (message: string, attachments?: MessageAttachments) => void }) => {
     const [inputMessage, setInputMessage] = React.useState('');
@@ -35,6 +36,11 @@ export const Messenger = React.memo(({ onMessage, onContextualUpdate }: { onCont
                         onContextualUpdate('User uploading image, please wait.');
                     }, 5000);
                     const base64s = await Promise.all(images.map((image: File) => toBase64(image)));
+                    const openAIClient = new OpenAI({
+                        apiKey: OPEN_AI_KEY,
+                        dangerouslyAllowBrowser: true,
+                    });
+
                     const response = await openAIClient.responses.create({
                         model: 'gpt-4.1',
                         input: [
