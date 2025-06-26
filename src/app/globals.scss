@@ -16,9 +16,9 @@ body {
     -moz-osx-font-smoothing: grayscale;
     --scroll-behavior: smooth;
     scroll-behavior: smooth;
-    -webkit-tap-highlight-color: transparent;
-    -moz-tap-highlight-color: transparent;
-    -o-tap-highlight-color: transparent;
+    -webkit-tap-highlight-color: $Gray1;
+    -moz-tap-highlight-color: $Gray1;
+    -o-tap-highlight-color: $Gray1;
     background-color: white;
 
     &.menu-opened {
@@ -87,7 +87,7 @@ textarea {
         left: 0;
         width: 0%;
         height: 100%;
-        background-color: darken(#658192, 15%);
+        background-color: rgb(69.7186234818, 89.0465587045, 100.7813765182);
         transition: all 0.3s;
         border-radius: 10rem;
         z-index: -1;

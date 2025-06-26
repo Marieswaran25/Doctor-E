@@ -12,3 +12,26 @@ export const signUpSchema = yup.object({
     password: yup.string().required('Password is required'),
     confirmPassword: yup.string().oneOf([yup.ref('password')], 'Passwords must match'),
 });
+
+export const uploadFieldSchema = yup.object().shape({
+    type: yup.string().oneOf(['XRay', 'CBCT', 'Image']).required('Field required'),
+    notation: yup
+        .string()
+        .oneOf(['FDI', 'Universal'], 'Invalid Selection')
+        .when(['type'], (type: string[], schema) => (['XRay', 'CBCT'].some(item => type.includes(item)) ? schema.required('Field Required') : schema.notRequired())),
+    xray: yup
+        .string()
+        .oneOf(['Periapical', 'Bitewing', 'Panoramic'], 'Invalid Selection')
+        .when(['type'], (type: string[], schema) => (['XRay'].some(item => type.includes(item)) ? schema.required('Field Required') : schema.notRequired())),
+
+    cbct: yup
+        .string()
+        .oneOf(['Upper', 'lower', 'both'], 'Invalid Selection')
+        .when(['type'], (type: string[], schema) => (['CBCT'].some(item => type.includes(item)) ? schema.required('Field Required') : schema.notRequired())),
+    model: yup.string().oneOf(['Basic', 'Advance'], 'Invalid Selection').required('Field Required'),
+    selectedTooths: yup
+        .array(yup.string())
+        .typeError('Selection is required')
+        .min(1, 'Selection is required')
+        .when(['type'], (type: string[], schema) => (['XRay'].some(item => type.includes(item)) ? schema.required('Field Required') : schema.notRequired())),
+});

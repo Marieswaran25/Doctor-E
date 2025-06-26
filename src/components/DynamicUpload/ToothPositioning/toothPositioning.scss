@@ -1,0 +1,87 @@
+@use '@theme/colors.module.scss' as *;
+@use '@theme/viewport.scss' as *;
+@use '@theme/common.module.scss' as *;
+@use '@theme/gradient.module.scss' as *;
+
+.tooth-positioning {
+    width: 100%;
+    @include flex-model(row, center, space-between, 0rem);
+
+    .left,
+    .right {
+        flex: 1;
+        @include flex-model(column, center, center, 0rem);
+        position: relative;
+        margin-top: 1rem;
+
+        .checkbox-group-wrapper {
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: flex-start !important;
+            gap: 0rem !important;
+
+            .checkbox-group {
+                width: 100%;
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                column-gap: 0rem;
+                row-gap: 0.7rem;
+                align-items: center;
+                place-items: center;
+                justify-content: center;
+            }
+
+            .checkbox-group-item {
+                @include mobile {
+                    width: 23px !important;
+                    height: 23px !important;
+                }
+            }
+
+            // .checkbox-group label:nth-child(6) {
+            //     grid-column: 2;
+            // }
+
+            // .checkbox-group label:nth-child(7) {
+            //     grid-column: 3;
+            // }
+
+            // .checkbox-group label:nth-child(8) {
+            //     grid-column: 4;
+            // }
+        }
+
+        > .left-title {
+            position: absolute;
+            top: -28px;
+            left: 0;
+        }
+
+        > .right-title {
+            position: absolute;
+            top: -28px;
+            right: 0;
+        }
+
+        .top,
+        .bottom {
+            width: 100%;
+            padding: 0.7rem;
+            @include flex-model(row, center, space-between, 1rem);
+        }
+    }
+
+    > .left {
+        border-right: 1px dotted $Gray3;
+
+        > .bottom {
+            border-top: 1px dotted $Gray3;
+        }
+    }
+
+    > .right {
+        > .bottom {
+            border-top: 1px dotted $Gray3;
+        }
+    }
+}

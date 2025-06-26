@@ -8,6 +8,8 @@ export const CommonContext = React.createContext<{
     setSideBarOpen: Dispatch<SetStateAction<boolean>>;
     isStreamed: boolean;
     setStreamed: Dispatch<SetStateAction<boolean>>;
+    isUploadOpen: boolean;
+    setUploadOpen: Dispatch<SetStateAction<boolean>>;
 }>({
     theme: 'light',
     sideBarOpen: false,
@@ -15,6 +17,8 @@ export const CommonContext = React.createContext<{
     setSideBarOpen: () => {},
     isStreamed: false,
     setStreamed: () => {},
+    isUploadOpen: false,
+    setUploadOpen: () => {},
 });
 
 export const useCommonContext = () => {

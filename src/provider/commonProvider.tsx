@@ -6,8 +6,13 @@ export const CommonProvider = ({ children }: { children: React.ReactNode }) => {
     const [theme, setTheme] = React.useState<'light' | 'dark'>('light');
     const [isSideBarOpen, setIsSideBarOpen] = React.useState(false);
     const [isStreamed, setIsStreamed] = React.useState(false);
+    const [isUploadOpen, setIsUploadOpen] = React.useState(false);
 
     return (
-        <CommonContext.Provider value={{ theme, isStreamed, setStreamed: setIsStreamed, setTheme, sideBarOpen: isSideBarOpen, setSideBarOpen: setIsSideBarOpen }}>{children}</CommonContext.Provider>
+        <CommonContext.Provider
+            value={{ isUploadOpen, setUploadOpen: setIsUploadOpen, theme, isStreamed, setStreamed: setIsStreamed, setTheme, sideBarOpen: isSideBarOpen, setSideBarOpen: setIsSideBarOpen }}
+        >
+            {children}
+        </CommonContext.Provider>
     );
 };

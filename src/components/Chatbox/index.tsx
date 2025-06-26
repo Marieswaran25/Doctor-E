@@ -22,7 +22,7 @@ export const AttachmentHeader = React.memo(({ msg }: { msg: { attachments: Messa
     return (
         <div className="message-attachment-wrapper">
             <Typography type="caption" weight="light" text={msg.attachments.prompt} color={'#254156'} as="p" />
-            <div className="attached-images">
+            <div className="attached-images" style={{ border: 'none' }}>
                 {urls.map(({ url }, i) => (
                     <Image src={url} key={i} alt="image" width={80} height={80} />
                 ))}

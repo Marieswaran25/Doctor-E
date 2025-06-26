@@ -10,4 +10,3 @@ export const HEYGEN_KNOWLEDGE_ID = process.env.NEXT_PUBLIC_HEYGEN_KNOWLEDGE_ID;
 export const HEYGEN_AVATAR_ID = process.env.NEXT_PUBLIC_HEYGEN_AVATAR_ID;
 
 export const OPEN_AI_KEY = process.env.NEXT_PUBLIC_OPENAI_API_KEY;
-

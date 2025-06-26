@@ -1,5 +1,9 @@
+import './attachment.scss';
+import colors from '@theme/colors.module.scss';
+
 import React from 'react';
 import AttachmentIcon from '@assets/icons/attachment.svg';
+import Typography from '@library/Typography';
 interface AttachmentProps {
     handleAttachment: (file: File[]) => void;
 }
@@ -12,8 +16,11 @@ export const Attachment: React.FC<AttachmentProps> = React.memo(({ handleAttachm
     };
     return (
         <div className="attachment">
-            <AttachmentIcon />
-            <input type="file" accept="image/*" multiple id="file-input" onChange={handleInputChange} value={''} />
+            <div className="title">
+                <AttachmentIcon />
+                <Typography type="p3" weight="light" text="Browse or drag and drop a file" as="span" color={colors.Gray3} />
+            </div>
+            <input type="file" accept="image/*" id="file-input" onChange={handleInputChange} value={''} />
         </div>
     );
 });

@@ -10,6 +10,8 @@ import Unmute from '@assets/icons/mic.svg';
 import Mute from '@assets/icons/mutedMic.svg';
 import Voice from '@assets/icons/voice.svg';
 import { Chatbox } from '@components/Chatbox';
+import { DynamicUpload } from '@components/DynamicUpload';
+import { EndCallNotification } from '@components/EndCallNotification';
 import { useConversation } from '@elevenlabs/react';
 import { getAudioStream } from '@helpers/getMediaStream';
 import { AvatarQuality, StartAvatarRequest, VoiceChatTransport } from '@heygen/streaming-avatar';
@@ -19,6 +21,7 @@ import { MessageAttachments, useStreamingAvatarContext } from '@hooks/logic/cont
 import { useConversationMessages } from '@hooks/logic/useConversationMessage';
 import { useTextChat } from '@hooks/logic/useTextChat';
 import { Button } from '@library/Button';
+import { Modal } from '@library/Modal';
 import Typography from '@library/Typography';
 import { createHeygenToken } from '@services/api/createHeygenToken';
 import Image from 'next/image';
@@ -66,7 +69,7 @@ const MemoizedChatBox = React.memo(
 );
 MemoizedChatBox.displayName = 'MemoizedChatBox';
 
-export const VoiceChatBot = () => {
+export const VoiceChatBot: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
     const [muteMic, setMuteMic] = useState(false);
     const scrollRef = useRef<HTMLDivElement | null>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
@@ -81,8 +84,9 @@ export const VoiceChatBot = () => {
     const { startVoiceChat, stopVoiceChat, muteInputAudio, unmuteInputAudio } = useVoiceChat();
     const { isAvatarTalking } = useStreamingAvatarContext();
     const { repeatMessageSync } = useTextChat();
-    const { setSideBarOpen, setStreamed } = useCommonContext();
+    const { setSideBarOpen, setStreamed, isUploadOpen, setUploadOpen } = useCommonContext();
     const [isThinking, setIsThinking] = useState(false);
+    const [endCallAlert, setEndCallAlert] = useState(false);
 
     const conversations = useConversation({
         micMuted: muteMic,
@@ -109,12 +113,14 @@ export const VoiceChatBot = () => {
                 console.log('Disconnected');
             } catch {
             } finally {
+                handleEndCancelCall();
                 setSideBarOpen(false);
                 setMessages([]);
                 stopVoiceChat();
                 setStreamed(false);
                 setMuteMic(false);
                 setIsThinking(false);
+                setUploadOpen(false);
                 setTimeout(() => {
                     setConnectionEstablished(false);
 
@@ -135,6 +141,14 @@ export const VoiceChatBot = () => {
     const isVideoStreamed = useMemo(() => {
         return avatarRef.current && status === 'connected' && connectionEstablished;
     }, [avatarRef, status, connectionEstablished]);
+
+    const handleEndCall = useCallback(() => {
+        setEndCallAlert(true);
+    }, []);
+
+    const handleEndCancelCall = useCallback(() => {
+        setEndCallAlert(false);
+    }, []);
 
     useEffect(() => {
         if (scrollRef.current) {
@@ -180,11 +194,6 @@ export const VoiceChatBot = () => {
                 await conversations.startSession({ agentId: CONVO_AGENT_ID });
                 setStreamed(true);
                 toast.success('Connected');
-                setTimeout(() => {
-                    if (isBrowser) {
-                        setSideBarOpen(true);
-                    }
-                }, 100);
             } catch (err: any) {
                 toast.error(err?.message || 'Failed to start session');
                 setConnectionEstablished(false);
@@ -198,12 +207,14 @@ export const VoiceChatBot = () => {
         } catch (err) {
             toast.error('Failed to stop session');
         } finally {
+            handleEndCancelCall();
             setSideBarOpen(false);
             setMuteMic(false);
             setIsThinking(false);
             setMessages([]);
             stopVoiceChat();
             setStreamed(false);
+            setUploadOpen(false);
             setTimeout(() => {
                 setConnectionEstablished(false);
 
@@ -230,6 +241,21 @@ export const VoiceChatBot = () => {
         }, 0);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [muteInputAudio, unmuteInputAudio]);
+
+    useEffect(() => {
+        let interval: NodeJS.Timeout | null = null;
+        if (isUploadOpen) {
+            interval = setInterval(() => {
+                sendContextualUpdate('User uploading image, please wait.');
+                sendUserActivity();
+            }, 5000);
+        }
+        return () => {
+            if (interval) {
+                clearInterval(interval);
+            }
+        };
+    }, [isUploadOpen, sendContextualUpdate, sendUserActivity]);
 
     return (
         <>
@@ -283,7 +309,7 @@ export const VoiceChatBot = () => {
                 {isVideoStreamed && (
                     <div className="actions">
                         <div className="action-icons">
-                            <Button label="" backgroundColor="#651C18" onClick={handleStop} leftIcon={Disconnect} backgroundColorOnHover="red" id="disconnect-btn" />
+                            <Button label="" backgroundColor="#651C18" onClick={handleEndCall} leftIcon={Disconnect} backgroundColorOnHover="red" id="disconnect-btn" />
                         </div>
                         <div className="action-icons">
                             <Button label="" backgroundColor={'#333537'} onClick={handleMute} leftIcon={!muteMic ? Unmute : Mute} backgroundColorOnHover="gray" id="mute-btn" />
@@ -291,6 +317,14 @@ export const VoiceChatBot = () => {
                     </div>
                 )}
             </section>
+            <DynamicUpload
+                onMessage={(m, attachments) => {
+                    setIsThinking(true);
+                    sendUserMessage(m);
+                    setMessages(prev => [...prev, { message: m, attachments, source: 'user' }]);
+                }}
+            />
+
             <MemoizedChatBox
                 isWindowOpen={!!isVideoStreamed}
                 onMessage={(m, attachments) => {
@@ -304,6 +338,12 @@ export const VoiceChatBot = () => {
                     sendUserActivity();
                 }}
             ></MemoizedChatBox>
+            {endCallAlert && (
+                <Modal handleModal={handleEndCancelCall} isCloseIcon className="end-call-modal">
+                    <EndCallNotification onCancel={handleEndCancelCall} onEndCall={handleStop} />
+                </Modal>
+            )}
+            {children}
         </>
     );
 };

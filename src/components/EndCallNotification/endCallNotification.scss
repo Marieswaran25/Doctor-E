@@ -1,0 +1,39 @@
+@use '@theme/colors.module.scss' as *;
+@use '@theme/viewport.scss' as *;
+@use '@theme/common.module.scss' as *;
+@use '@theme/gradient.module.scss' as *;
+
+.end-call-notification {
+    @include flex-model(column, center, center, 1.5rem);
+    background: white;
+    width: 30%;
+    border-radius: 10px;
+    padding: 2rem;
+
+    @include mobile {
+        width: 100%;
+    }
+
+    > p {
+        text-align: center;
+    }
+
+    > .button-wrapper {
+        width: 100%;
+        @include flex-model(row, center, space-between, 1rem);
+
+        > button {
+            flex: 1;
+            height: 40px;
+
+            @include tablet {
+                height: 56px;
+            }
+        }
+
+        @include tablet {
+            flex-direction: column-reverse;
+            margin-top: 1rem;
+        }
+    }
+}

@@ -1,4 +1,5 @@
 import { StickyChat } from '@components/StickyChat';
+import { StickyUpload } from '@components/StickyUpload';
 import { VoiceChatBot } from '@components/VoiceChatBot';
 import { StreamingAvatarProvider } from '@hooks/logic';
 import { CommonProvider } from '@provider/commonProvider';
@@ -10,6 +11,7 @@ export default function HomePage() {
                 <StreamingAvatarProvider basePath={process.env.NEXT_PUBLIC_HEYGEN_URL}>
                     <VoiceChatBot />
                     <StickyChat />
+                    <StickyUpload />
                 </StreamingAvatarProvider>
             </CommonProvider>
         </main>

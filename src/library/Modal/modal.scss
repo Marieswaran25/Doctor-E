@@ -13,21 +13,25 @@
     padding: 1rem;
     background-color: rgba(0, 0, 0, 0.801);
     @include flex-model-nogap(row, center, center);
+
     .close-icon {
         align-self: flex-start;
         position: fixed;
         right: 15px;
         top: 15px;
         cursor: pointer;
+
         > svg {
-            width: 40px;
-            height: 40px;
+            width: 30px;
+            height: 30px;
             fill: white !important;
+
             > path {
                 fill: white;
             }
         }
     }
+
     > div {
         animation: fadein 0.7s ease;
     }
@@ -37,6 +41,7 @@
     from {
         opacity: 0;
     }
+
     to {
         opacity: 1;
     }
