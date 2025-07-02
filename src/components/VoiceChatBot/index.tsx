@@ -2,7 +2,7 @@
 import './voiceChatBot.scss';
 
 import React, { useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react';
-import { isBrowser } from 'react-device-detect';
+import { set } from 'react-hook-form';
 import toast, { Toaster } from 'react-hot-toast';
 import Disconnect from '@assets/icons/disconnect.svg';
 import DrE from '@assets/icons/drE.webp';
@@ -10,6 +10,7 @@ import Unmute from '@assets/icons/mic.svg';
 import Mute from '@assets/icons/mutedMic.svg';
 import Voice from '@assets/icons/voice.svg';
 import { Chatbox } from '@components/Chatbox';
+import { DefaultPrompts } from '@components/DefaultPrompts';
 import { DynamicUpload } from '@components/DynamicUpload';
 import { EndCallNotification } from '@components/EndCallNotification';
 import { useConversation } from '@elevenlabs/react';
@@ -24,10 +25,10 @@ import { Button } from '@library/Button';
 import { Modal } from '@library/Modal';
 import Typography from '@library/Typography';
 import { createHeygenToken } from '@services/api/createHeygenToken';
+import { generateReportPdf } from '@services/api/generateReportPdf';
 import Image from 'next/image';
 
 import { CONVO_AGENT_ID, HEYGEN_AVATAR_ID } from '@/config';
-// import { DefaultPrompts } from '@components/DefaultPrompts';
 
 const DEFAULT_CONFIG: StartAvatarRequest = {
     quality: AvatarQuality.High,
@@ -41,12 +42,6 @@ const DEFAULT_CONFIG: StartAvatarRequest = {
         },
     },
 };
-
-// const DEFAULT_PROMPTS: string[] = [
-//     'Can you explain common dental issues to me?',
-//     'Can you explain dental implants to me?',
-//     'Can you explain dental care to me?',
-// ]
 
 const MemoizedChatBox = React.memo(
     ({
@@ -84,9 +79,10 @@ export const VoiceChatBot: React.FC<{ children?: React.ReactNode }> = ({ childre
     const { startVoiceChat, stopVoiceChat, muteInputAudio, unmuteInputAudio } = useVoiceChat();
     const { isAvatarTalking } = useStreamingAvatarContext();
     const { repeatMessageSync } = useTextChat();
-    const { setSideBarOpen, setStreamed, isUploadOpen, setUploadOpen } = useCommonContext();
+    const { setStreamed, isUploadOpen, cleanUpCommonContext, diagnosis, setDiagnosis } = useCommonContext();
     const [isThinking, setIsThinking] = useState(false);
     const [endCallAlert, setEndCallAlert] = useState(false);
+    const [isDownloading, startDownloadTrxn] = useTransition();
 
     const conversations = useConversation({
         micMuted: muteMic,
@@ -114,13 +110,10 @@ export const VoiceChatBot: React.FC<{ children?: React.ReactNode }> = ({ childre
             } catch {
             } finally {
                 handleEndCancelCall();
-                setSideBarOpen(false);
-                setMessages([]);
                 stopVoiceChat();
-                setStreamed(false);
                 setMuteMic(false);
                 setIsThinking(false);
-                setUploadOpen(false);
+                cleanUpCommonContext();
                 setTimeout(() => {
                     setConnectionEstablished(false);
 
@@ -208,13 +201,10 @@ export const VoiceChatBot: React.FC<{ children?: React.ReactNode }> = ({ childre
             toast.error('Failed to stop session');
         } finally {
             handleEndCancelCall();
-            setSideBarOpen(false);
+            stopVoiceChat();
             setMuteMic(false);
             setIsThinking(false);
-            setMessages([]);
-            stopVoiceChat();
-            setStreamed(false);
-            setUploadOpen(false);
+            cleanUpCommonContext();
             setTimeout(() => {
                 setConnectionEstablished(false);
 
@@ -256,6 +246,33 @@ export const VoiceChatBot: React.FC<{ children?: React.ReactNode }> = ({ childre
             }
         };
     }, [isUploadOpen, sendContextualUpdate, sendUserActivity]);
+
+    useEffect(() => {
+        if (sessionState === StreamingAvatarSessionState.INACTIVE && status === 'connected') {
+            try {
+                handleStop();
+            } catch {}
+        }
+    }, [sessionState, status, handleStop]);
+
+    const generateDiagnosisReport = useCallback(() => {
+        startDownloadTrxn(async () => {
+            try {
+                if (!diagnosis) return;
+                await generateReportPdf({
+                    diagnosis: diagnosis?.response?.replaceAll('**', ''),
+                    image: diagnosis?.image,
+                    reportType: diagnosis?.reportType,
+                    selectedTooth: diagnosis?.selectedTooth,
+                    age: Number(diagnosis?.age || 25),
+                    name: diagnosis?.name || 'N/A',
+                });
+                setDiagnosis(null);
+            } catch (e: any) {
+                toast.error(e?.message || 'Failed to generate PDF');
+            }
+        });
+    }, [diagnosis, setDiagnosis]);
 
     return (
         <>
@@ -315,6 +332,19 @@ export const VoiceChatBot: React.FC<{ children?: React.ReactNode }> = ({ childre
                             <Button label="" backgroundColor={'#333537'} onClick={handleMute} leftIcon={!muteMic ? Unmute : Mute} backgroundColorOnHover="gray" id="mute-btn" />
                         </div>
                     </div>
+                )}
+                {isVideoStreamed && diagnosis && (
+                    <DefaultPrompts
+                        prompts={[
+                            {
+                                text: 'Download your diagnosis report',
+                                action: () => {
+                                    generateDiagnosisReport();
+                                },
+                                isLoading: isDownloading,
+                            },
+                        ]}
+                    />
                 )}
             </section>
             <DynamicUpload

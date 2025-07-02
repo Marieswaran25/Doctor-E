@@ -10,6 +10,25 @@ export const CommonContext = React.createContext<{
     setStreamed: Dispatch<SetStateAction<boolean>>;
     isUploadOpen: boolean;
     setUploadOpen: Dispatch<SetStateAction<boolean>>;
+    diagnosis: {
+        response: string;
+        reportType: string;
+        image: string;
+        selectedTooth: string;
+        age?: number;
+        name?: string;
+    } | null;
+    setDiagnosis: Dispatch<
+        SetStateAction<{
+            response: string;
+            reportType: string;
+            image: string;
+            selectedTooth: string;
+            age?: number;
+            name?: string;
+        } | null>
+    >;
+    cleanUpCommonContext: () => void;
 }>({
     theme: 'light',
     sideBarOpen: false,
@@ -19,6 +38,9 @@ export const CommonContext = React.createContext<{
     setStreamed: () => {},
     isUploadOpen: false,
     setUploadOpen: () => {},
+    diagnosis: null,
+    setDiagnosis: () => {},
+    cleanUpCommonContext: () => {},
 });
 
 export const useCommonContext = () => {

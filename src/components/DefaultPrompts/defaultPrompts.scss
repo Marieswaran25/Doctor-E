@@ -4,26 +4,38 @@
 @use '@theme/gradient.module.scss' as *;
 
 .default-prompts-wrapper {
-    @include flex-model(column, flex-start, flex-start, 1rem);
+    @include flex-model(column, center, flex-start, 1rem);
     margin-top: 1rem;
+    align-self: center;
+    width: 100%;
 
-    > .default-prompt {
-        @include flex-model(row, center, flex-start, 0.5rem);
-        padding: 1rem;
-        border-radius: 10px;
-        border: 1px solid #254156;
-        cursor: pointer;
+    > button,
+    > a {
+        min-width: 250px;
+        width: auto !important;
+        gap: 0.5rem;
+        border: 1px solid $Gray3;
+        background-color: $Gray3 !important;
+        height: 50px;
 
         > svg {
             width: 20px;
             height: 30px;
+
+            > path {
+                stroke: white !important;
+            }
         }
 
         &:hover {
-            border: 1px solid #658192 !important;
-
             > p {
-                color: #254156 !important;
+                color: white !important;
+            }
+
+            > svg {
+                > path {
+                    stroke: white !important;
+                }
             }
         }
     }

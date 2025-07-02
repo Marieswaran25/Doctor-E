@@ -14,6 +14,8 @@ export const signUpSchema = yup.object({
 });
 
 export const uploadFieldSchema = yup.object().shape({
+    name: yup.string().required('Name is required'),
+    age: yup.string().required('Age is required'),
     type: yup.string().oneOf(['XRay', 'CBCT', 'Image']).required('Field required'),
     notation: yup
         .string()

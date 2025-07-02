@@ -4,23 +4,23 @@
 @use '@theme/gradient.module.scss' as *;
 
 .dynamic-upload-container {
-    width: 60%;
+    width: 45%;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
     padding: 1rem;
     border-radius: 10px;
     background-color: white;
     position: relative;
     @include flex-model(column, flex-start, flex-start, 1rem);
+    max-height: 75vh;
+    overflow-y: auto;
 
     @include tablet {
         width: 100%;
-        max-height: 75vh;
-        overflow-y: auto;
     }
 
     .outer {
         width: 100%;
-        @include flex-model(row, flex-start, space-between, 0rem);
+        @include flex-model(row, flex-start, space-between, 1rem);
 
         @include tablet {
             flex-direction: column;
@@ -28,53 +28,27 @@
         }
 
         > .left {
-            width: 35%;
+            width: 100%;
             @include flex-model(column, flex-start, flex-start, 1rem);
 
             @include tablet {
                 width: 100%;
             }
 
-            > .type {
+            > .type,
+            > .xray,
+            > .report-type,
+            > .notation,
+            > .info,
+            > .selection {
                 width: 100%;
             }
 
-            > .xray {
-                width: 100%;
-            }
-
-            > .report-type {
-                width: 100%;
-            }
-
-            > .notation {
-                width: 100%;
-            }
-        }
-
-        > .right {
-            width: 65%;
-            @include flex-model(column, flex-start, flex-start, 1rem);
-            opacity: 0;
-            transform: translateY(50px);
-            transition: all 0.5s ease-in-out;
-
-            @include tablet {
-                opacity: 1;
-                transform: none;
-            }
-
-            &.active {
-                opacity: 1;
-                transform: translateY(0);
-            }
-
-            @include tablet {
-                width: 100%;
+            > .info {
+                @include flex-model(column, flex-start, flex-start, 1rem);
             }
 
             > .selection {
-                width: 100%;
                 @include flex-model(column, flex-start, flex-start, 1rem);
 
                 > p {

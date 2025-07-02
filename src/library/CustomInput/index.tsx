@@ -29,7 +29,15 @@ const CustomInput = forwardRef((props: InputProps, ref: React.Ref<HTMLInputEleme
         <div className="form-group-wrapper">
             {label && (
                 <div className="info-wrapper">
-                    <Typography type="p3" weight="regular" text={stylize(label)} as="strong" className={` custom-label ${isRequired ? 'required' : ''}`} style={labelStyle} />
+                    <Typography
+                        type="p3"
+                        weight="regular"
+                        text={stylize(label)}
+                        as="strong"
+                        className={` custom-label ${isRequired ? 'required' : ''}`}
+                        style={labelStyle}
+                        color={labelStyle?.color || 'black'}
+                    />
                     {info && (
                         <Tooltip infoText={info}>
                             <Info className="info" />

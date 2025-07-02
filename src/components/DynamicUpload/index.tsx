@@ -12,6 +12,7 @@ import { useCommonContext } from '@hooks/logic/commonContext';
 import { MessageAttachments } from '@hooks/logic/context';
 import { Button } from '@library/Button';
 import { CustomCheckBox } from '@library/CustomCheckBox';
+import CustomInput from '@library/CustomInput';
 import { Modal } from '@library/Modal';
 import Typography from '@library/Typography';
 import { uploadFieldSchema } from '@utils/schema';
@@ -26,7 +27,7 @@ type DynamicUploadProps = {
 };
 
 export const DynamicUpload: React.FC<DynamicUploadProps> = ({ onMessage }) => {
-    const { isUploadOpen, setUploadOpen } = useCommonContext();
+    const { isUploadOpen, setUploadOpen, setDiagnosis } = useCommonContext();
     const [isLoading, startTransaction] = useTransition();
     const [images, setImages] = React.useState<File[]>([]);
 
@@ -92,7 +93,7 @@ Each tooth or edentulous site must be individually described, addressing the fol
  • Note clearly any observed pathology such as dental caries, apical lesions, furcation involvement, root resorption, fractures, or any other relevant radiographic findings.
  • Provide your professional prognosis for each tooth or site as good, questionable, or poor, and include a brief clinical rationale.
 
-This is the user provided input: xray type - ${data.xray}, notation - ${data.notation}, tooth position - ${data.selectedTooths?.sort().join(', ')}, notation: ${data.notation}
+This is the user provided input: patient name - ${data.name || 'N/A'}, patient age - ${data.age}, xray type - ${data.xray}, notation - ${data.notation}, tooth position - ${data.selectedTooths?.sort().join(', ')}
 Never omit edentulous or extracted sites. Always mention their tooth numbering clearly as given by the user and discuss the clinical condition of these areas comprehensively, including bone quality and potential for future implant placement or prosthetic rehabilitation when relevant.
 
 Do NOT provide treatment recommendations deliver only the diagnostic findings, prognosis, and clinical rationales as a concise, natural-sounding professional statement, avoiding technical methods, citations, or bullet points beyond the structure above.
@@ -126,6 +127,14 @@ Do NOT provide treatment recommendations deliver only the diagnostic findings, p
                         type: 'image',
                         count: images.length,
                         prompt: '',
+                    });
+                    setDiagnosis({
+                        age: Number(data.age || 25),
+                        name: data.name || 'John Doe',
+                        response: message,
+                        reportType: data.type,
+                        image: base64s[0],
+                        selectedTooth: data.selectedTooths ? data.selectedTooths?.sort().join(', ') : '',
                     });
 
                     console.log('response', response);
@@ -166,6 +175,33 @@ Do NOT provide treatment recommendations deliver only the diagnostic findings, p
                         </div>
                         <div className="outer">
                             <div className="left">
+                                <div className="info">
+                                    <CustomInput
+                                        type="text"
+                                        placeholder="Enter the patient's name"
+                                        label="Name"
+                                        inputMode="text"
+                                        labelStyle={{ color: colors.Gray3 }}
+                                        isRequired
+                                        {...register('name')}
+                                        error={errors?.name?.message}
+                                        groupClass={errors?.name?.message ? 'error' : ''}
+                                    />
+                                    <CustomInput
+                                        type="tel"
+                                        inputMode="numeric"
+                                        placeholder="Enter the patient's age"
+                                        label="Age"
+                                        isRequired
+                                        labelStyle={{ color: colors.Gray3 }}
+                                        min={1}
+                                        max={99}
+                                        maxLength={2}
+                                        {...register('age')}
+                                        error={errors?.age?.message}
+                                        groupClass={errors?.age?.message ? 'error' : ''}
+                                    />
+                                </div>
                                 <div className="type">
                                     <CustomCheckBox
                                         isRequired
@@ -260,8 +296,6 @@ Do NOT provide treatment recommendations deliver only the diagnostic findings, p
                                         />
                                     </div>
                                 )}
-                            </div>
-                            <div className={`right ${uploadField.type === 'XRay' && uploadField.notation ? 'active' : ''}`}>
                                 {uploadField.type === 'XRay' && uploadField.notation && (
                                     <div className={`selection `}>
                                         <Typography type="p3" weight="regular" text="Select Teeth" color={colors.Gray3} as="p" />
