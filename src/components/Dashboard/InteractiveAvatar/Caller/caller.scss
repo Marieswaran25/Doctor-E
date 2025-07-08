@@ -1,0 +1,27 @@
+@use '@theme/colors.module.scss' as *;
+@use '@theme/viewport.scss' as *;
+@use '@theme/common.module.scss' as *;
+@use '@theme/gradient.module.scss' as *;
+
+.caller {
+    border-radius: 10px;
+    padding: 1rem;
+    background-color: #303030;
+    width: 200px;
+    position: absolute;
+    right: 10%;
+    top: 50%;
+
+    > .caller-container {
+        @include flex-model(column, center, center, 1.2rem);
+        position: relative;
+
+        > svg {
+            width: 15px;
+            height: 15px;
+            position: absolute;
+            top: 6px;
+            left: 5px;
+        }
+    }
+}

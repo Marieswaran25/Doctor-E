@@ -6,7 +6,7 @@ export const generateReportPdf = async (data: { age: number; name: string; diagn
     const report = `report-${new Date().getTime()}.pdf`;
     return new Promise((resolve, reject) => {
         axios
-            .post(API_SERVICE_URL + '/pdf/pdfReport', data, {
+            .post(API_SERVICE_URL + '/pdf/diagnosis-report', data, {
                 responseType: 'blob',
             })
             .then(response => {

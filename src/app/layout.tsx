@@ -1,10 +1,11 @@
 import './globals.scss';
 
-import { Navbar } from '@components/Navbar';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import { Analytics } from '@vercel/analytics/react';
 import { Metadata } from 'next';
 import { Poppins } from 'next/font/google';
-// import Script from 'next/script';
+
+import { GOOGLE_CLIENT_ID } from '@/config';
 
 const poppins = Poppins({
     subsets: ['latin'],
@@ -30,11 +31,10 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body className={poppins.className}>
-                <Navbar />
-                {children}
-                {/* <Script src='https://widget-omega-three.vercel.app/widget.js' async id="elatre-voice" />
-                <elatre-voice agent-id="agent_01jw809vgmex7agff0vpz1mez2"></elatre-voice> */}
-                <Analytics />
+                <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+                    {children}
+                    <Analytics />
+                </GoogleOAuthProvider>
             </body>
         </html>
     );

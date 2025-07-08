@@ -10,3 +10,5 @@ export const HEYGEN_AVATAR_ID = process.env.NEXT_PUBLIC_HEYGEN_AVATAR_ID;
 export const OPEN_AI_KEY = process.env.NEXT_PUBLIC_OPENAI_API_KEY;
 
 export const API_SERVICE_URL = process.env.NEXT_PUBLIC_API_SERVICE_URL;
+
+export const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;

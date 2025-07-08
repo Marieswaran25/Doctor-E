@@ -1,0 +1,12 @@
+@use '@theme/colors.module.scss' as *;
+@use '@theme/viewport.scss' as *;
+@use '@theme/common.module.scss' as *;
+@use '@theme/gradient.module.scss' as *;
+
+.transparent-loader-modal {
+    @include flex-model(column, center, center, 1rem);
+
+    > img {
+        transform: scale(3);
+    }
+}

@@ -1,9 +1,13 @@
 import { Banner } from '@components/Home/Banner';
+import { Navbar } from '@components/Navbar';
 
 export default function HomePage() {
     return (
-        <main style={{ position: 'relative' }}>
-            <Banner />
-        </main>
+        <>
+            <Navbar />
+            <main style={{ position: 'relative' }}>
+                <Banner />
+            </main>
+        </>
     );
 }

@@ -12,10 +12,8 @@ const nextConfig = {
         remotePatterns: [
             {
                 protocol: 'https',
-                hostname: 'dummyjson.com',
-                port: '',
-                pathname: '/icon/**',
-                search: '',
+                hostname: 'lh3.googleusercontent.com',
+                pathname: '**',
             },
         ],
     },

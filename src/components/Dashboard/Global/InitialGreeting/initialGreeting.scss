@@ -1,0 +1,13 @@
+@use '@theme/colors.module.scss' as *;
+@use '@theme/viewport.scss' as *;
+@use '@theme/common.module.scss' as *;
+@use '@theme/gradient.module.scss' as *;
+
+.initial-greeting {
+    @include flex-model(column, flex-start, flex-start, 1.2rem);
+    padding: 0 5rem !important;
+
+    @include tablet {
+        padding: 0 1rem !important;
+    }
+}

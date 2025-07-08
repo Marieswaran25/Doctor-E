@@ -1,15 +1,13 @@
 'use client';
 import React, { Dispatch, SetStateAction } from 'react';
 
-export const CommonContext = React.createContext<{
-    theme: string;
-    sideBarOpen: boolean;
-    setTheme: Dispatch<SetStateAction<'light' | 'dark'>>;
-    setSideBarOpen: Dispatch<SetStateAction<boolean>>;
+export const InteractiveAvatarContext = React.createContext<{
+    isTranscriptionOpen: boolean;
+    setIsTranscriptionOpen: Dispatch<SetStateAction<boolean>>;
     isStreamed: boolean;
     setStreamed: Dispatch<SetStateAction<boolean>>;
-    isUploadOpen: boolean;
-    setUploadOpen: Dispatch<SetStateAction<boolean>>;
+    isUploadDialogBoxopen: boolean;
+    setIsUploadDialogBoxopen: Dispatch<SetStateAction<boolean>>;
     diagnosis: {
         response: string;
         reportType: string;
@@ -30,19 +28,17 @@ export const CommonContext = React.createContext<{
     >;
     cleanUpCommonContext: () => void;
 }>({
-    theme: 'light',
-    sideBarOpen: false,
-    setTheme: () => {},
-    setSideBarOpen: () => {},
+    isTranscriptionOpen: false,
+    setIsTranscriptionOpen: () => {},
     isStreamed: false,
     setStreamed: () => {},
-    isUploadOpen: false,
-    setUploadOpen: () => {},
+    isUploadDialogBoxopen: false,
+    setIsUploadDialogBoxopen: () => {},
     diagnosis: null,
     setDiagnosis: () => {},
     cleanUpCommonContext: () => {},
 });
 
-export const useCommonContext = () => {
-    return React.useContext(CommonContext);
+export const useInteractiveAvatarContext = () => {
+    return React.useContext(InteractiveAvatarContext);
 };

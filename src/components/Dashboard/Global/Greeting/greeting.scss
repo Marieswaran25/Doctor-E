@@ -1,0 +1,15 @@
+@use '@theme/colors.module.scss' as *;
+@use '@theme/viewport.scss' as *;
+@use '@theme/common.module.scss' as *;
+@use '@theme/gradient.module.scss' as *;
+
+.greeting {
+    > h6 {
+        text-wrap: balance;
+        word-break: break-word;
+
+        @include mobile {
+            font-size: 1.8rem;
+        }
+    }
+}

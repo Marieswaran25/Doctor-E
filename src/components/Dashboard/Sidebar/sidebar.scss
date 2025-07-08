@@ -1,0 +1,137 @@
+@use '@theme/colors.module.scss' as *;
+@use '@theme/viewport.scss' as *;
+@use '@theme/common.module.scss' as *;
+@use '@theme/gradient.module.scss' as *;
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: -25%;
+    width: 25%;
+    height: 100vh;
+    background: #ffffff;
+    transition: left 0.5s ease;
+    z-index: 1001;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+
+    &.open {
+        left: 0;
+    }
+
+    @include tablet {
+        left: -80%;
+        width: 80%;
+    }
+
+    > .sidebar-header {
+        height: 60px;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+
+        button {
+            margin-top: 20px;
+            height: 25px;
+            width: 25px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 30px;
+
+            svg {
+                width: 20px;
+                height: 20px;
+
+                path {
+                    fill: #254156 !important;
+                }
+            }
+
+            &:hover {
+                background-color: #658192 !important;
+
+                path {
+                    fill: #ffffff !important;
+                }
+            }
+        }
+    }
+
+    > .sidebar-buttons {
+        display: flex;
+        justify-content: flex-start;
+        width: 100%;
+        color: #254156;
+        text-decoration: none;
+        transition:
+            background-color 0.2s,
+            color 0.2s;
+        border-radius: 10px;
+        background: transparent;
+        text-align: left;
+        cursor: pointer;
+        margin-bottom: 0.5rem;
+
+        svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        &.active {
+            background-color: $Gray2;
+
+            &:hover {
+                background-color: $Gray2 !important;
+
+                > span {
+                    color: white !important;
+                }
+            }
+        }
+
+        &.logout-button {
+            margin-top: auto;
+
+            > svg {
+                > path {
+                    fill: $Gray3 !important;
+                }
+            }
+
+            &:hover {
+                background-color: #ff0000;
+
+                > svg {
+                    > path {
+                        fill: white !important;
+                    }
+                }
+
+                > span {
+                    color: white !important;
+                }
+            }
+        }
+
+        &:hover {
+            background-color: $Gray1;
+
+            > span {
+                color: $Gray3 !important;
+            }
+        }
+    }
+}
+
+.sidebar-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+}
