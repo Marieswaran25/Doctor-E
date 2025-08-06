@@ -11,7 +11,6 @@ export const Greeting = () => {
 
     const greeting = useMemo(() => {
         const currentTime = new Date().getHours();
-        console.log(currentTime);
         if (currentTime < 12) {
             return 'Good Morning';
         } else if (currentTime < 18) {

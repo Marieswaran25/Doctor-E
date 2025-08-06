@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { DashboardContext } from '@hooks/logic/dashboardContext';
+import { DashboardContext } from '@hooks/interactive-avatar/dashboardContext';
 
 export const SettingsProvider = ({ children }: { children: React.ReactNode }) => {
     const [theme, setTheme] = React.useState<'light' | 'dark'>('light');
@@ -8,7 +8,7 @@ export const SettingsProvider = ({ children }: { children: React.ReactNode }) =>
     const [currentTab, setCurrentTab] = React.useState('Chat with Doctor');
     const [isPageLoading, startPageTransition] = React.useTransition();
 
-    const cleanUpSettings = () => {
+    const clearSettings = () => {
         setIsSideBarOpen(false);
         setCurrentTab('Chat with Doctor');
     };
@@ -24,7 +24,7 @@ export const SettingsProvider = ({ children }: { children: React.ReactNode }) =>
                 setCurrentTab,
                 isPageLoading,
                 startPageTransition,
-                cleanUpSettings,
+                clearSettings,
             }}
         >
             {children}

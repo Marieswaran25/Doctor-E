@@ -10,7 +10,7 @@ export const DashboardContext = React.createContext<{
     setActiveSidebar: Dispatch<SetStateAction<boolean>>;
     isPageLoading: boolean;
     startPageTransition: TransitionStartFunction;
-    cleanUpSettings: () => void;
+    clearSettings: () => void;
 }>({
     theme: 'light',
     activeSidebar: false,
@@ -20,7 +20,7 @@ export const DashboardContext = React.createContext<{
     setCurrentTab: () => {},
     isPageLoading: false,
     startPageTransition: () => {},
-    cleanUpSettings: () => {},
+    clearSettings: () => {},
 });
 
 export const useDashboardSettings = () => {

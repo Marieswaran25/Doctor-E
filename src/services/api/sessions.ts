@@ -1,5 +1,5 @@
 import CustomAxios from '@helpers/customAxiox';
-import { Conversation } from '@hooks/logic/context';
+import { Conversation } from '@hooks/interactive-avatar/context';
 
 import { API_SERVICE_URL } from '@/config';
 

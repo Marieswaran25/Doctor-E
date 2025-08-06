@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { useDashboardSettings } from '@hooks/logic/dashboardContext';
+import { useDashboardSettings } from '@hooks/interactive-avatar/dashboardContext';
 import Typography from '@library/Typography';
 import { View } from '@library/View';
 

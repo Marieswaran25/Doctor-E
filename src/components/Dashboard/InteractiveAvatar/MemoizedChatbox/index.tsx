@@ -1,5 +1,5 @@
 import React from 'react';
-import { MessageAttachments } from '@hooks/logic/context';
+import { MessageAttachments } from '@hooks/interactive-avatar/context';
 
 import { Chatbox } from '../Chatbox';
 

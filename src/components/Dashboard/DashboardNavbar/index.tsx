@@ -3,7 +3,7 @@ import './dashboardNavbar.scss';
 import React from 'react';
 import Menu from '@assets/icons/sidebar/menu.svg';
 import { ProfileIcon } from '@components/Dashboard/Global/ProfileIcon';
-import { useDashboardSettings } from '@hooks/logic/dashboardContext';
+import { useDashboardSettings } from '@hooks/interactive-avatar/dashboardContext';
 import { Button } from '@library/Button';
 import { View } from '@library/View';
 

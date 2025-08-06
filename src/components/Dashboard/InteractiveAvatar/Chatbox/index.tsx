@@ -3,9 +3,9 @@ import './chatbox.scss';
 import React, { useEffect, useMemo, useRef } from 'react';
 import Close from '@assets/icons/close.svg';
 import { Messenger } from '@components/Dashboard/InteractiveAvatar/Messenger';
-import { MessageAttachments } from '@hooks/logic/context';
-import { useInteractiveAvatarContext } from '@hooks/logic/interactiveAvatarContext';
-import { useConversationMessages } from '@hooks/logic/useConversationMessage';
+import { MessageAttachments } from '@hooks/interactive-avatar/context';
+import { useInteractiveAvatarContext } from '@hooks/interactive-avatar/interactiveAvatarContext';
+import { useConversationMessages } from '@hooks/interactive-avatar/useConversationMessage';
 import Typography from '@library/Typography';
 import Image from 'next/image';
 

@@ -4,7 +4,7 @@ import colors from '@theme/colors.module.scss';
 import React from 'react';
 import Arrow from '@assets/icons/rightArrow.svg';
 import { AttachmentHeader } from '@components/Dashboard/InteractiveAvatar/Chatbox';
-import { Conversation as ConversationType } from '@hooks/logic/context';
+import { Conversation as ConversationType } from '@hooks/interactive-avatar/context';
 import Typography from '@library/Typography';
 
 export const Conversation = ({ item, convoId, dateTime, isOpen, toggle }: { isOpen: boolean; toggle: () => void; item: ConversationType[]; convoId: string; dateTime: string }) => {

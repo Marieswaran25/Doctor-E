@@ -103,7 +103,6 @@ export const useStreamingAvatarSession = () => {
             avatarRef.current.on(StreamingEvents.AVATAR_END_MESSAGE, handleEndMessage);
 
             const session = await avatarRef.current.createStartAvatar(config);
-            console.log(session);
             setSessionId(session?.session_id);
             return {
                 ...avatarRef.current,

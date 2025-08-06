@@ -4,7 +4,7 @@ import './messenger.scss';
 import React, { useCallback, useEffect } from 'react';
 import Send from '@assets/icons/send.svg';
 import { toBase64 } from '@functions/toBase64';
-import { MessageAttachments } from '@hooks/logic/context';
+import { MessageAttachments } from '@hooks/interactive-avatar/context';
 import { Button } from '@library/Button';
 import Typography from '@library/Typography';
 import OpenAI from 'openai';

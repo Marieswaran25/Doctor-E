@@ -1,13 +1,13 @@
 'use client';
 import React, { TransitionStartFunction } from 'react';
 import { ROUTES } from '@constants/routes';
-import { SessionStorage } from '@Customtypes/sessionStorage';
+import { LocalStorage, setStorageKey } from '@helpers/storage';
+import { useNavigation } from '@hooks/useNavigation';
 import { useGoogleOneTapLogin } from '@react-oauth/google';
 import { loginWithGoogle } from '@services/api/auth';
-import { useRouter } from 'next/navigation';
 
 export const OneTapGoogleLogin = ({ startGoogleSignInTrxn }: { startGoogleSignInTrxn: TransitionStartFunction }) => {
-    const router = useRouter();
+    const router = useNavigation();
     useGoogleOneTapLogin({
         onSuccess: tokenResponse => {
             startGoogleSignInTrxn(async () => {
@@ -17,7 +17,7 @@ export const OneTapGoogleLogin = ({ startGoogleSignInTrxn }: { startGoogleSignIn
                         console.log(token);
                         const { accessToken } = await loginWithGoogle({ token });
                         console.log(accessToken);
-                        localStorage.setItem(SessionStorage.ACCESS_TOKEN, accessToken);
+                        setStorageKey(LocalStorage.ACCESS_TOKEN, accessToken);
                         console.log('success');
                         router.push(ROUTES.DASHBOARD_CHAT_WITH_DOCTOR);
                     }

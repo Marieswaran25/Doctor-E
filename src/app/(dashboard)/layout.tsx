@@ -1,6 +1,7 @@
 'use client';
 import './layout.scss';
 
+import GlobalAuthHandler from '@components/Auth';
 import { DashboardNavbar } from '@components/Dashboard/DashboardNavbar';
 import { Sidebar } from '@components/Dashboard/Sidebar';
 import { SettingsProvider } from '@provider/dashboardProvider';
@@ -19,6 +20,7 @@ export default function DashboardLayout({
     return (
         <QueryClientProvider client={queryClient}>
             {APP_ENV && <ReactQueryDevtools initialIsOpen={true} />}
+            <GlobalAuthHandler />
             <SettingsProvider>
                 <InteractiveAvatarProvider>
                     <DashboardNavbar />

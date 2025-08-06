@@ -8,23 +8,24 @@ import Google from '@assets/icons/google.svg';
 import { TransparentLoaderModal } from '@components/Dashboard/Global/TransparentLoaderModal';
 import { OneTapGoogleLogin } from '@components/Dashboard/OneTapGoogleLogin';
 import { ROUTES } from '@constants/routes';
-import { SessionStorage } from '@Customtypes/sessionStorage';
 import { stylize } from '@functions/stylize';
+import { LocalStorage, setStorageKey } from '@helpers/storage';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { useNavigation } from '@hooks/useNavigation';
 import { Button } from '@library/Button';
 import CustomInput from '@library/CustomInput';
 import Typography from '@library/Typography';
 import { View } from '@library/View';
-import { useGoogleLogin, useGoogleOneTapLogin } from '@react-oauth/google';
-import { basicAuthLogin, loginWithGoogle, signUpUser } from '@services/api/auth';
+import { useGoogleLogin } from '@react-oauth/google';
+import { basicAuthLogin, loginWithGoogle } from '@services/api/auth';
 import { loginSchema } from '@utils/schema';
-import { useRouter } from 'next/navigation';
 import * as yup from 'yup';
 type SignInProps = {
     children?: React.ReactNode;
 };
 
 export const SignIn: React.FC<SignInProps> = ({ children }) => {
+    const router = useNavigation();
     const [isGoogleSignInLoading, startGoogleSignInTrxn] = React.useTransition();
     const login = useGoogleLogin({
         flow: 'auth-code',
@@ -38,7 +39,7 @@ export const SignIn: React.FC<SignInProps> = ({ children }) => {
                         const { accessToken } = await loginWithGoogle({ code });
                         console.log('next');
                         console.log(accessToken);
-                        localStorage.setItem(SessionStorage.ACCESS_TOKEN, accessToken);
+                        setStorageKey(LocalStorage.ACCESS_TOKEN, accessToken);
                         console.log('success');
                         router.push(ROUTES.DASHBOARD_CHAT_WITH_DOCTOR);
                     }
@@ -60,7 +61,6 @@ export const SignIn: React.FC<SignInProps> = ({ children }) => {
         resolver: yupResolver(loginSchema),
         mode: 'onChange',
     });
-    const router = useRouter();
     const [isLoading, startTransition] = React.useTransition();
 
     const onSubmit = handleSubmit(data => {
@@ -72,7 +72,7 @@ export const SignIn: React.FC<SignInProps> = ({ children }) => {
                 const response = await basicAuthLogin(data);
 
                 if (response.accessToken) {
-                    localStorage.setItem(SessionStorage.ACCESS_TOKEN, response.accessToken);
+                    setStorageKey(LocalStorage.ACCESS_TOKEN, response.accessToken);
                     reset();
                     router.push(ROUTES.DASHBOARD_CHAT_WITH_DOCTOR);
                 } else {

@@ -10,15 +10,17 @@ import HomeIcon from '@assets/icons/sidebar/home.svg';
 import Logout from '@assets/icons/sidebar/logout.svg';
 import YourReports from '@assets/icons/sidebar/reports.svg';
 import { ROUTES } from '@constants/routes';
-import { SessionStorage } from '@Customtypes/sessionStorage';
-import { useDashboardSettings } from '@hooks/logic/dashboardContext';
+import { useDashboardSettings } from '@hooks/interactive-avatar/dashboardContext';
+import { useNavigation } from '@hooks/useNavigation';
 import { useProfile } from '@hooks/useProfile';
 import { Button } from '@library/Button';
 import Typography from '@library/Typography';
 import { googleLogout } from '@react-oauth/google';
 import { logout } from '@services/api/auth';
 import Image from 'next/image';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
+
+import { unAuthorizedEvent } from '@/config';
 
 const menuItem = [
     { label: 'Chat With Doctor', icon: HomeIcon, path: ROUTES.DASHBOARD_CHAT_WITH_DOCTOR },
@@ -29,7 +31,7 @@ const menuItem = [
 ];
 
 export const Sidebar = () => {
-    const router = useRouter();
+    const router = useNavigation();
     const { profile } = useProfile();
     const pathname = usePathname();
     const { setCurrentTab, setActiveSidebar, activeSidebar, startPageTransition, currentTab } = useDashboardSettings();
@@ -40,11 +42,8 @@ export const Sidebar = () => {
             googleLogout();
         }
         await logout();
-        localStorage.removeItem(SessionStorage.ACCESS_TOKEN);
-        setTimeout(() => {
-            router.push(ROUTES.SIGN_IN);
-        }, 0);
-    }, [profile?.loginType, router]);
+        window.dispatchEvent(new CustomEvent(unAuthorizedEvent));
+    }, [profile?.loginType]);
 
     const handleNavigation = useCallback(
         (item: { label: string; icon: any; path: string }) => {

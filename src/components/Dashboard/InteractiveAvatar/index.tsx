@@ -14,12 +14,12 @@ import { EndCallNotification } from '@components/Dashboard/InteractiveAvatar/End
 import { useConversation } from '@elevenlabs/react';
 import { getAudioStream } from '@helpers/getMediaStream';
 import { AvatarQuality, StartAvatarRequest, VoiceChatTransport } from '@heygen/streaming-avatar';
-import { StreamingAvatarSessionState, useInterrupt, useStreamingAvatarSession, useVoiceChat } from '@hooks/logic';
-import { useStreamingAvatarContext } from '@hooks/logic/context';
-import { useDashboardSettings } from '@hooks/logic/dashboardContext';
-import { useInteractiveAvatarContext } from '@hooks/logic/interactiveAvatarContext';
-import { useConversationMessages } from '@hooks/logic/useConversationMessage';
-import { useTextChat } from '@hooks/logic/useTextChat';
+import { StreamingAvatarSessionState, useInterrupt, useStreamingAvatarSession, useVoiceChat } from '@hooks/interactive-avatar';
+import { useStreamingAvatarContext } from '@hooks/interactive-avatar/context';
+import { useDashboardSettings } from '@hooks/interactive-avatar/dashboardContext';
+import { useInteractiveAvatarContext } from '@hooks/interactive-avatar/interactiveAvatarContext';
+import { useConversationMessages } from '@hooks/interactive-avatar/useConversationMessage';
+import { useTextChat } from '@hooks/interactive-avatar/useTextChat';
 import { Button } from '@library/Button';
 import { Modal } from '@library/Modal';
 import Typography from '@library/Typography';
@@ -69,7 +69,7 @@ export const InteractiveAvatar: React.FC<{ children?: React.ReactNode }> = ({ ch
     const [isThinking, setIsThinking] = useState(false);
     const [endCallAlert, setEndCallAlert] = useState(false);
     const [isDownloading, startDownloadTrxn] = useTransition();
-    const { setActiveSidebar, cleanUpSettings } = useDashboardSettings();
+    const { setActiveSidebar, clearSettings } = useDashboardSettings();
 
     useEffect(() => {
         (async () => {
@@ -180,7 +180,7 @@ export const InteractiveAvatar: React.FC<{ children?: React.ReactNode }> = ({ ch
             if (status === 'connected') {
                 try {
                     await conversations.endSession();
-                } catch { }
+                } catch {}
             }
 
             if (sessionState === StreamingAvatarSessionState.CONNECTED) {
@@ -205,7 +205,7 @@ export const InteractiveAvatar: React.FC<{ children?: React.ReactNode }> = ({ ch
             } catch (err: any) {
                 toast.error(err?.message || 'Failed to start session');
                 setConnectionEstablished(false);
-                cleanUpSettings();
+                clearSettings();
                 avatarRef.current = null;
             } finally {
                 document.body.classList.add('overflow-hidden');
@@ -234,7 +234,7 @@ export const InteractiveAvatar: React.FC<{ children?: React.ReactNode }> = ({ ch
                 setMuteMic(false);
                 setIsThinking(false);
                 cleanUpCommonContext();
-                cleanUpSettings();
+                clearSettings();
                 queryClient.invalidateQueries({ queryKey: ['conversations'] });
                 setTimeout(() => {
                     if (videoRef.current) {
@@ -246,7 +246,22 @@ export const InteractiveAvatar: React.FC<{ children?: React.ReactNode }> = ({ ch
                 }, 10);
             }
         });
-    }, [avatarRef, conversations, stopAvatar, stopVoiceChat, handleEndCancelCall, cleanUpCommonContext, cleanUpSettings, setMessages, sessionId, conversationId, messages, startEndCallTrxn, setIsThinking, queryClient,]);
+    }, [
+        avatarRef,
+        conversations,
+        stopAvatar,
+        stopVoiceChat,
+        handleEndCancelCall,
+        cleanUpCommonContext,
+        clearSettings,
+        setMessages,
+        sessionId,
+        conversationId,
+        messages,
+        startEndCallTrxn,
+        setIsThinking,
+        queryClient,
+    ]);
 
     const handleMute = useCallback(() => {
         setMuteMic(prev => !prev);
@@ -280,7 +295,7 @@ export const InteractiveAvatar: React.FC<{ children?: React.ReactNode }> = ({ ch
         if (sessionState === StreamingAvatarSessionState.INACTIVE && status === 'connected') {
             try {
                 handleStop();
-            } catch { }
+            } catch {}
         }
     }, [sessionState, status, handleStop]);
 

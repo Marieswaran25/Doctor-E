@@ -1,9 +1,8 @@
 'use client';
 import { InteractiveAvatar } from '@components/Dashboard/InteractiveAvatar';
-import { Caller } from '@components/Dashboard/InteractiveAvatar/Caller';
 import { StickyChat } from '@components/Dashboard/StickyChat';
 import { StickyUpload } from '@components/Dashboard/StickyUpload';
-import { StreamingAvatarProvider } from '@hooks/logic';
+import { StreamingAvatarProvider } from '@hooks/interactive-avatar';
 
 import AuthLayout from '@/layout/authLayout';
 

@@ -6,16 +6,15 @@ import { useEffect } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import { InitialGreeting } from '@components/Dashboard/Global/InitialGreeting';
 import { ROUTES } from '@constants/routes';
-import { useDashboardSettings } from '@hooks/logic/dashboardContext';
+import { useDashboardSettings } from '@hooks/interactive-avatar/dashboardContext';
+import { useNavigation } from '@hooks/useNavigation';
 import { useProfile } from '@hooks/useProfile';
 import { Loader } from '@library/Loader';
-import { useRouter } from 'next/navigation';
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
-    const { isPageLoading } = useDashboardSettings();
+    const { isPageLoading, currentTab } = useDashboardSettings();
     const { profile, isLoading: profileLoading, error } = useProfile();
-    const router = useRouter();
-    const { currentTab } = useDashboardSettings();
+    const router = useNavigation();
 
     useEffect(() => {
         if (error && !profile) {

@@ -8,9 +8,10 @@ import Google from '@assets/icons/google.svg';
 import { TransparentLoaderModal } from '@components/Dashboard/Global/TransparentLoaderModal';
 import { OneTapGoogleLogin } from '@components/Dashboard/OneTapGoogleLogin';
 import { ROUTES } from '@constants/routes';
-import { SessionStorage } from '@Customtypes/sessionStorage';
 import { stylize } from '@functions/stylize';
+import { LocalStorage, setStorageKey } from '@helpers/storage';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { useNavigation } from '@hooks/useNavigation';
 import { Button } from '@library/Button';
 import CustomInput from '@library/CustomInput';
 import Typography from '@library/Typography';
@@ -18,13 +19,12 @@ import { View } from '@library/View';
 import { useGoogleLogin } from '@react-oauth/google';
 import { loginWithGoogle, signUpUser } from '@services/api/auth';
 import { signUpSchema } from '@utils/schema';
-import { useRouter } from 'next/navigation';
 import * as yup from 'yup';
 
 export const SignUp: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
     const [isGoogleSignInLoading, startGoogleSignInTrxn] = React.useTransition();
 
-    const router = useRouter();
+    const router = useNavigation();
     const googleSignUp = useGoogleLogin({
         flow: 'auth-code',
         ux_mode: 'popup',
@@ -37,7 +37,7 @@ export const SignUp: React.FC<{ children?: React.ReactNode }> = ({ children }) =
                         const { accessToken } = await loginWithGoogle({ code });
                         console.log('next');
                         console.log(accessToken);
-                        localStorage.setItem(SessionStorage.ACCESS_TOKEN, accessToken);
+                        setStorageKey(LocalStorage.ACCESS_TOKEN, accessToken);
                         console.log('success');
                         router.push(ROUTES.DASHBOARD_CHAT_WITH_DOCTOR);
                     }
@@ -73,7 +73,7 @@ export const SignUp: React.FC<{ children?: React.ReactNode }> = ({ children }) =
                     },
                 });
                 if (response.accessToken) {
-                    localStorage.setItem(SessionStorage.ACCESS_TOKEN, response.accessToken);
+                    setStorageKey(LocalStorage.ACCESS_TOKEN, response.accessToken);
                     reset();
                     router.push(ROUTES.DASHBOARD_CHAT_WITH_DOCTOR);
                 } else {

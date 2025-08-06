@@ -1,11 +1,10 @@
 import { ROUTES } from '@constants/routes';
-import { SessionStorage } from '@Customtypes/sessionStorage';
 import { rotateRefresToken } from '@services/api/auth';
-import axios, { AxiosInstance } from 'axios';
+import axios, { AxiosInstance, isAxiosError } from 'axios';
 
-import { API_SERVICE_URL } from '@/config';
+import { API_SERVICE_URL, unAuthorizedEvent } from '@/config';
 
-import { getAccessTokenFromSessionStorage } from './getAccessTokenFromSessionStorage';
+import { getStorageKey, LocalStorage, removeStorageKey, setStorageKey } from './storage';
 
 export const CustomAxios: AxiosInstance = axios.create({
     baseURL: API_SERVICE_URL,
@@ -22,7 +21,7 @@ subsequent or failed request (403) - get new access token refreshed by Refresh A
 
 CustomAxios.interceptors.request.use(
     async config => {
-        const token = getAccessTokenFromSessionStorage();
+        const token = getStorageKey(LocalStorage.ACCESS_TOKEN);
         if (token && !config.headers['Authorization']) {
             config.headers['Authorization'] = `Bearer ${token}`;
         }
@@ -45,18 +44,21 @@ CustomAxios.interceptors.response.use(
     },
     async function (error) {
         const originalRequest = error.config;
-
+        if (isAxiosError(error) && error.response?.status === 401) {
+            window.dispatchEvent(new CustomEvent(unAuthorizedEvent));
+            return Promise.reject(error);
+        }
         if (error.response && error.response.status === 403 && !originalRequest._retry) {
             originalRequest._retry = true;
 
             try {
                 const { accessToken } = await rotateRefresToken();
-                localStorage.setItem(SessionStorage.ACCESS_TOKEN, accessToken);
+                setStorageKey(LocalStorage.ACCESS_TOKEN, accessToken);
                 axios.defaults.headers.common['Authorization'] = accessToken;
                 originalRequest.headers['Authorization'] = accessToken;
                 return CustomAxios(originalRequest, { headers: { Authorization: accessToken } });
             } catch (refreshError) {
-                localStorage.removeItem(SessionStorage.ACCESS_TOKEN);
+                removeStorageKey(LocalStorage.ACCESS_TOKEN);
                 if (typeof window !== 'undefined') {
                     alert('Your session has expired. Please login again.');
                     window.location.href = ROUTES.SIGN_IN;
