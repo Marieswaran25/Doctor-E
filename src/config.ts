@@ -13,4 +13,4 @@ export const API_SERVICE_URL = process.env.NEXT_PUBLIC_API_SERVICE_URL;
 
 export const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 
-export const APP_ENV = process.env?.APP_ENV || 'development';
+export const APP_ENV = process.env.NEXT_PUBLIC_APP_ENV || 'development';
