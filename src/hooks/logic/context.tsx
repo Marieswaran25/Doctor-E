@@ -24,6 +24,12 @@ export interface MessageAttachments {
     prompt: string;
     files?: File[];
 }
+export type Conversation = {
+    source: 'ai' | 'user';
+    message: string;
+    datetime: string;
+    attachments?: MessageAttachments;
+};
 
 type StreamingAvatarContextProps = {
     avatarRef: React.MutableRefObject<StreamingAvatar | null>;
@@ -57,41 +63,41 @@ type StreamingAvatarContextProps = {
     connectionQuality: ConnectionQuality;
     setConnectionQuality: (connectionQuality: ConnectionQuality) => void;
 
-    conversationMessages: {
-        source: 'ai' | 'user';
-        message: string;
-        attachments?: MessageAttachments;
-    }[];
-    setConversationMessages: React.Dispatch<React.SetStateAction<{ source: 'ai' | 'user'; message: string; attachments?: MessageAttachments }[]>>;
+    conversationMessages: Conversation[];
+    setConversationMessages: React.Dispatch<React.SetStateAction<Conversation[]>>;
+    sessionId: string | null;
+    setSessionId: React.Dispatch<React.SetStateAction<string | null>>;
 };
 
 const StreamingAvatarContext = React.createContext<StreamingAvatarContextProps>({
     avatarRef: { current: null },
     isMuted: true,
-    setIsMuted: () => {},
+    setIsMuted: () => { },
     isVoiceChatLoading: false,
-    setIsVoiceChatLoading: () => {},
+    setIsVoiceChatLoading: () => { },
     sessionState: StreamingAvatarSessionState.INACTIVE,
-    setSessionState: () => {},
+    setSessionState: () => { },
     isVoiceChatActive: false,
-    setIsVoiceChatActive: () => {},
+    setIsVoiceChatActive: () => { },
     stream: null,
-    setStream: () => {},
+    setStream: () => { },
     messages: [],
-    clearMessages: () => {},
-    handleUserTalkingMessage: () => {},
-    handleStreamingTalkingMessage: () => {},
-    handleEndMessage: () => {},
+    clearMessages: () => { },
+    handleUserTalkingMessage: () => { },
+    handleStreamingTalkingMessage: () => { },
+    handleEndMessage: () => { },
     isListening: false,
-    setIsListening: () => {},
+    setIsListening: () => { },
     isUserTalking: false,
-    setIsUserTalking: () => {},
+    setIsUserTalking: () => { },
     isAvatarTalking: false,
-    setIsAvatarTalking: () => {},
+    setIsAvatarTalking: () => { },
     connectionQuality: ConnectionQuality.UNKNOWN,
-    setConnectionQuality: () => {},
+    setConnectionQuality: () => { },
     conversationMessages: [],
-    setConversationMessages: () => {},
+    setConversationMessages: () => { },
+    sessionId: null,
+    setSessionId: () => { },
 });
 
 const useStreamingAvatarSessionState = () => {
@@ -210,9 +216,15 @@ const useStreamingAvatarConnectionQualityState = () => {
 };
 
 const useStreamingConvesationMessages = () => {
-    const [conversationMessages, setConversationMessages] = useState<{ source: 'ai' | 'user'; message: string; attachments?: MessageAttachments }[]>([]);
+    const [conversationMessages, setConversationMessages] = useState<Conversation[]>([]);
 
     return { conversationMessages, setConversationMessages };
+};
+
+const useStreamingSessionInfo = () => {
+    const [sessionId, setSessionId] = useState<string | null>(null);
+
+    return { sessionId, setSessionId };
 };
 
 export const StreamingAvatarProvider = ({ children, basePath }: { children: React.ReactNode; basePath?: string }) => {
@@ -224,6 +236,7 @@ export const StreamingAvatarProvider = ({ children, basePath }: { children: Reac
     const talkingState = useStreamingAvatarTalkingState();
     const connectionQualityState = useStreamingAvatarConnectionQualityState();
     const conversationMessagesState = useStreamingConvesationMessages();
+    const sessionInfo = useStreamingSessionInfo();
 
     return (
         <StreamingAvatarContext.Provider
@@ -237,6 +250,7 @@ export const StreamingAvatarProvider = ({ children, basePath }: { children: Reac
                 ...talkingState,
                 ...connectionQualityState,
                 ...conversationMessagesState,
+                ...sessionInfo,
             }}
         >
             {children}

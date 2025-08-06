@@ -28,7 +28,13 @@ type SignUpUserRequest = {
         language: string;
     }>;
 };
-export const loginWithGoogle = async ({ token, code }: { token?: string; code?: string }): Promise<{ accessToken: string }> => {
+export type LoginResponse = {
+    accessToken: string;
+    refreshToken: string;
+    userId: string;
+    roles: string[];
+};
+export const loginWithGoogle = async ({ token, code }: { token?: string; code?: string }): Promise<LoginResponse> => {
     return new Promise((resolve, reject) => {
         CustomAxios.post(API_SERVICE_URL + '/sign-in/google', { token, code }, { withCredentials: true })
             .then(response => {
@@ -40,7 +46,7 @@ export const loginWithGoogle = async ({ token, code }: { token?: string; code?: 
     });
 };
 
-export const basicAuthLogin = async ({ email, password }: { email: string; password: string }): Promise<{ accessToken: string }> => {
+export const basicAuthLogin = async ({ email, password }: { email: string; password: string }): Promise<LoginResponse> => {
     return new Promise((resolve, reject) => {
         axios
             .post(API_SERVICE_URL + '/login', { email, password }, { withCredentials: true })
@@ -53,7 +59,7 @@ export const basicAuthLogin = async ({ email, password }: { email: string; passw
     });
 };
 
-export const signUpUser = async (data: SignUpUserRequest): Promise<{ accessToken: string }> => {
+export const signUpUser = async (data: SignUpUserRequest): Promise<LoginResponse> => {
     return new Promise((resolve, reject) => {
         axios
             .post(API_SERVICE_URL + '/users', data, { withCredentials: true })

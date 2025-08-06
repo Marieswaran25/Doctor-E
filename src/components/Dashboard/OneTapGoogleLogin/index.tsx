@@ -17,7 +17,7 @@ export const OneTapGoogleLogin = ({ startGoogleSignInTrxn }: { startGoogleSignIn
                         console.log(token);
                         const { accessToken } = await loginWithGoogle({ token });
                         console.log(accessToken);
-                        sessionStorage.setItem(SessionStorage.ACCESS_TOKEN, accessToken);
+                        localStorage.setItem(SessionStorage.ACCESS_TOKEN, accessToken);
                         console.log('success');
                         router.push(ROUTES.DASHBOARD_CHAT_WITH_DOCTOR);
                     }

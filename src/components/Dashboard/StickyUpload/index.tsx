@@ -3,7 +3,7 @@ import './stickyUpload.scss';
 
 import React, { Fragment } from 'react';
 import Upload from '@assets/icons/upload.svg';
-import { useInteractiveAvatarContext } from '@hooks/logic/commonContext';
+import { useInteractiveAvatarContext } from '@hooks/logic/interactiveAvatarContext';
 
 export const StickyUpload = () => {
     const { setIsUploadDialogBoxopen, isStreamed } = useInteractiveAvatarContext();

@@ -3,7 +3,7 @@ import './stickyChat.scss';
 
 import React, { Fragment } from 'react';
 import Chat from '@assets/icons/chat.svg';
-import { useInteractiveAvatarContext } from '@hooks/logic/commonContext';
+import { useInteractiveAvatarContext } from '@hooks/logic/interactiveAvatarContext';
 
 export const StickyChat = () => {
     const { setIsTranscriptionOpen, isStreamed } = useInteractiveAvatarContext();

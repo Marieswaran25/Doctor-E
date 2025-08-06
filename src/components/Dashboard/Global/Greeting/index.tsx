@@ -3,12 +3,11 @@ import './greeting.scss';
 import colors from '@theme/colors.module.scss';
 
 import { useMemo } from 'react';
-import { useAuthContext } from '@hooks/logic/authContext';
+import { useProfile } from '@hooks/useProfile';
 import Typography from '@library/Typography';
-import { View } from '@library/View';
 
 export const Greeting = () => {
-    const { profile } = useAuthContext();
+    const { profile } = useProfile();
 
     const greeting = useMemo(() => {
         const currentTime = new Date().getHours();

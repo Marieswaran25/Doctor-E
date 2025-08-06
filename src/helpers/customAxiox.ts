@@ -51,12 +51,12 @@ CustomAxios.interceptors.response.use(
 
             try {
                 const { accessToken } = await rotateRefresToken();
-                sessionStorage.setItem(SessionStorage.ACCESS_TOKEN, accessToken);
+                localStorage.setItem(SessionStorage.ACCESS_TOKEN, accessToken);
                 axios.defaults.headers.common['Authorization'] = accessToken;
                 originalRequest.headers['Authorization'] = accessToken;
                 return CustomAxios(originalRequest, { headers: { Authorization: accessToken } });
             } catch (refreshError) {
-                sessionStorage.removeItem(SessionStorage.ACCESS_TOKEN);
+                localStorage.removeItem(SessionStorage.ACCESS_TOKEN);
                 if (typeof window !== 'undefined') {
                     alert('Your session has expired. Please login again.');
                     window.location.href = ROUTES.SIGN_IN;

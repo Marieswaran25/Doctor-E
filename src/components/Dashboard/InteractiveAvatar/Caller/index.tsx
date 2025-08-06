@@ -5,12 +5,12 @@ import React from 'react';
 import Mic from '@assets/icons/mic.svg';
 import Muted from '@assets/icons/mutedMic.svg';
 import { ProfileIcon } from '@components/Dashboard/Global/ProfileIcon';
-import { useAuthContext } from '@hooks/logic/authContext';
+import { useProfile } from '@hooks/useProfile';
 import Typography from '@library/Typography';
 import Image from 'next/image';
 
 export const Caller = ({ isSpeaking }: { isSpeaking: boolean }) => {
-    const { profile } = useAuthContext();
+    const { profile } = useProfile();
     return (
         <div className="caller">
             <div className="caller-container">

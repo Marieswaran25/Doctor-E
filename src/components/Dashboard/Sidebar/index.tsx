@@ -11,8 +11,8 @@ import Logout from '@assets/icons/sidebar/logout.svg';
 import YourReports from '@assets/icons/sidebar/reports.svg';
 import { ROUTES } from '@constants/routes';
 import { SessionStorage } from '@Customtypes/sessionStorage';
-import { useAuthContext } from '@hooks/logic/authContext';
 import { useDashboardSettings } from '@hooks/logic/dashboardContext';
+import { useProfile } from '@hooks/useProfile';
 import { Button } from '@library/Button';
 import Typography from '@library/Typography';
 import { googleLogout } from '@react-oauth/google';
@@ -30,7 +30,7 @@ const menuItem = [
 
 export const Sidebar = () => {
     const router = useRouter();
-    const { profile } = useAuthContext();
+    const { profile } = useProfile();
     const pathname = usePathname();
     const { setCurrentTab, setActiveSidebar, activeSidebar, startPageTransition, currentTab } = useDashboardSettings();
 
@@ -40,7 +40,7 @@ export const Sidebar = () => {
             googleLogout();
         }
         await logout();
-        sessionStorage.removeItem(SessionStorage.ACCESS_TOKEN);
+        localStorage.removeItem(SessionStorage.ACCESS_TOKEN);
         setTimeout(() => {
             router.push(ROUTES.SIGN_IN);
         }, 0);

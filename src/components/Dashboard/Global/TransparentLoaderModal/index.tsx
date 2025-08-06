@@ -8,7 +8,7 @@ import Image from 'next/image';
 export const TransparentLoaderModal = () => {
     return (
         <Modal className="transparent-loader-modal">
-            <Image src={SpinBall} alt="loader" width={50} height={50} />
+            <Image src={SpinBall} alt="loader" width={50} height={50} unoptimized />
         </Modal>
     );
 };

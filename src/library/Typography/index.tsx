@@ -7,7 +7,7 @@ interface TypographyProps extends React.HTMLAttributes<HTMLSpanElement> {
     /**
      * Typography type
      */
-    type: 'p1' | 'p2' | 'p3' | 'caption' | 'h1' | 'h2' | 'h3' | 'h4' | 'd1' | 'd2' | 'd3' | 'd4' | 'd5';
+    type: 'p1' | 'p2' | 'p3' | 'caption' | 'mini' | 'h1' | 'h2' | 'h3' | 'h4' | 'd1' | 'd2' | 'd3' | 'd4' | 'd5';
     /**
      * Typography type
      */

@@ -8,8 +8,8 @@ import { AttachedImages } from '@components/Dashboard/InteractiveAvatar/Messenge
 import { Attachment } from '@components/Dashboard/InteractiveAvatar/Messenger/Attachment';
 import { toBase64 } from '@functions/toBase64';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useInteractiveAvatarContext } from '@hooks/logic/commonContext';
 import { MessageAttachments } from '@hooks/logic/context';
+import { useInteractiveAvatarContext } from '@hooks/logic/interactiveAvatarContext';
 import { Button } from '@library/Button';
 import { CustomCheckBox } from '@library/CustomCheckBox';
 import CustomInput from '@library/CustomInput';

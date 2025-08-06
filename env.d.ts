@@ -1,5 +1,6 @@
 interface Process {
     env: {
+        APP_ENV: string;
         NEXT_PUBLIC_CONVO_AGENT_ID: string;
         NEXT_PUBLIC_CONVO_API_KEY: string;
         NEXT_PUBLIC_HEYGEN_URL: string;

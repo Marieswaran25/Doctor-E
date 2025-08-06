@@ -7,9 +7,10 @@ import Typography from '@library/Typography';
 type EndCallNotificationProps = {
     onCancel: () => void;
     onEndCall: () => void;
+    isLoading?: boolean;
 };
 
-export const EndCallNotification: React.FC<EndCallNotificationProps> = ({ onCancel, onEndCall }) => {
+export const EndCallNotification: React.FC<EndCallNotificationProps> = ({ isLoading, onCancel, onEndCall }) => {
     return (
         <div className="end-call-notification">
             <Typography type="p3" weight="regular" text="Would you like to end the call now?" color="gray" as="p" />
@@ -21,6 +22,8 @@ export const EndCallNotification: React.FC<EndCallNotificationProps> = ({ onCanc
                     onClick={onEndCall}
                     backgroundColorOnHover="red"
                     id="end-call"
+                    isLoading={isLoading}
+                    disabled={isLoading}
                 />
             </div>
         </div>

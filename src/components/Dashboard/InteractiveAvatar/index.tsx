@@ -1,7 +1,7 @@
 'use client';
 import './interactiveAvatar.scss';
 
-import React, { use, useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import Disconnect from '@assets/icons/disconnect.svg';
 import DrE from '@assets/icons/drE.webp';
@@ -15,9 +15,9 @@ import { useConversation } from '@elevenlabs/react';
 import { getAudioStream } from '@helpers/getMediaStream';
 import { AvatarQuality, StartAvatarRequest, VoiceChatTransport } from '@heygen/streaming-avatar';
 import { StreamingAvatarSessionState, useInterrupt, useStreamingAvatarSession, useVoiceChat } from '@hooks/logic';
-import { useInteractiveAvatarContext } from '@hooks/logic/commonContext';
 import { useStreamingAvatarContext } from '@hooks/logic/context';
 import { useDashboardSettings } from '@hooks/logic/dashboardContext';
+import { useInteractiveAvatarContext } from '@hooks/logic/interactiveAvatarContext';
 import { useConversationMessages } from '@hooks/logic/useConversationMessage';
 import { useTextChat } from '@hooks/logic/useTextChat';
 import { Button } from '@library/Button';
@@ -25,6 +25,8 @@ import { Modal } from '@library/Modal';
 import Typography from '@library/Typography';
 import { createHeygenToken } from '@services/api/createHeygenToken';
 import { generateReportPdf } from '@services/api/generateReportPdf';
+import { closeSession, createSession } from '@services/api/sessions';
+import { useQueryClient } from '@tanstack/react-query';
 import Image from 'next/image';
 
 import { CONVO_AGENT_ID, HEYGEN_AVATAR_ID } from '@/config';
@@ -49,12 +51,16 @@ export const InteractiveAvatar: React.FC<{ children?: React.ReactNode }> = ({ ch
     const scrollRef = useRef<HTMLDivElement | null>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
     const hegenToken = useRef<string | null>(null);
+    const sessionId = useRef<string | null>(null);
+    const conversationId = useRef<string | null>(null);
 
     const [connectionEstablished, setConnectionEstablished] = useState(false);
     const { conversationMessages: messages, setConversationMessages: setMessages } = useConversationMessages();
     const [isLoading, startTrxn] = useTransition();
+    const [isEndCallLoading, startEndCallTrxn] = useTransition();
+    const queryClient = useQueryClient();
 
-    const { avatarRef, stream, startAvatar, stopAvatar, sessionState } = useStreamingAvatarSession();
+    const { avatarRef, stream, startAvatar, stopAvatar, sessionState, sessionId: videoSessionId } = useStreamingAvatarSession();
     const { interrupt } = useInterrupt();
     const { startVoiceChat, stopVoiceChat, muteInputAudio, unmuteInputAudio } = useVoiceChat();
     const { isAvatarTalking } = useStreamingAvatarContext();
@@ -79,6 +85,9 @@ export const InteractiveAvatar: React.FC<{ children?: React.ReactNode }> = ({ ch
 
     const conversations = useConversation({
         micMuted: muteMic,
+        onConnect: async id => {
+            conversationId.current = id.conversationId;
+        },
         onError: msg => console.error('[Error]', msg),
         onMessage: async msg => {
             if (msg.source === 'ai' && avatarRef.current) {
@@ -93,37 +102,42 @@ export const InteractiveAvatar: React.FC<{ children?: React.ReactNode }> = ({ ch
                 setIsThinking(true);
                 interrupt();
             }
-            setMessages(prev => [...prev, msg]);
+            setMessages(prev => [
+                ...prev,
+                {
+                    datetime: new Date().toISOString(),
+                    ...msg,
+                },
+            ]);
         },
-        onDisconnect: async () => {
+
+        onDisconnect: async p => {
+            console.log(p);
             try {
                 console.log('Disconnecting');
                 await stopAvatar();
                 console.log('Disconnected');
             } catch {
             } finally {
-                hegenToken.current = null;
-                handleEndCancelCall();
-                stopVoiceChat();
-                document.body.classList.remove('overflow-hidden');
-                setMuteMic(false);
-                setIsThinking(false);
-                cleanUpCommonContext();
-                cleanUpSettings();
-                setMessages([]);
-                setTimeout(() => {
-                    setConnectionEstablished(false);
-
-                    if (videoRef.current) {
-                        videoRef.current.srcObject = null;
-                    }
-                    if (avatarRef.current) {
-                        avatarRef.current = null;
-                    }
-                }, 10);
+                if (p.reason !== 'user') {
+                    handleStop();
+                }
             }
         },
         volume: 0,
+        clientTools: {
+            set_diagnosis_report: async response => {
+                console.log('EXTRACTED', response?.data);
+                setDiagnosis({
+                    name: '',
+                    age: 26,
+                    selectedTooth: '',
+                    reportType: 'x-ray',
+                    response: response?.data,
+                    image: '',
+                });
+            },
+        },
     });
 
     const { status, isSpeaking, sendUserMessage, sendContextualUpdate, sendUserActivity } = conversations;
@@ -166,7 +180,7 @@ export const InteractiveAvatar: React.FC<{ children?: React.ReactNode }> = ({ ch
             if (status === 'connected') {
                 try {
                     await conversations.endSession();
-                } catch {}
+                } catch { }
             }
 
             if (sessionState === StreamingAvatarSessionState.CONNECTED) {
@@ -177,13 +191,15 @@ export const InteractiveAvatar: React.FC<{ children?: React.ReactNode }> = ({ ch
                 if (!hegenToken.current) {
                     hegenToken.current = await createHeygenToken();
                 }
-                await startAvatar(DEFAULT_CONFIG, hegenToken.current);
+                const { sessionId: newSessionId } = await startAvatar(DEFAULT_CONFIG, hegenToken.current);
+
                 setConnectionEstablished(true);
 
                 await getAudioStream();
                 await startVoiceChat(!muteMic);
 
-                await conversations.startSession({ agentId: CONVO_AGENT_ID });
+                const [_, session] = await Promise.all([conversations.startSession({ agentId: CONVO_AGENT_ID }), createSession({ externalSessionId: newSessionId || '' })]);
+                sessionId.current = session.sessionId;
                 setStreamed(true);
                 toast.success('Connected');
             } catch (err: any) {
@@ -197,25 +213,30 @@ export const InteractiveAvatar: React.FC<{ children?: React.ReactNode }> = ({ ch
             }
         });
     };
-    const handleStop = useCallback(
-        async () => {
+    const handleStop = useCallback(() => {
+        setConnectionEstablished(false);
+        startEndCallTrxn(async () => {
             try {
+                setMessages([]);
                 await Promise.all([conversations.endSession(), stopAvatar()]);
             } catch (err) {
                 toast.error('Failed to stop session');
             } finally {
+                if (sessionId.current && conversationId.current) {
+                    await closeSession({ sessionId: sessionId.current, externalConversationId: conversationId.current || '', message: messages.filter(m => !m.attachments) });
+                    sessionId.current = null;
+                    conversationId.current = null;
+                }
                 hegenToken.current = null;
                 handleEndCancelCall();
                 stopVoiceChat();
                 document.body.classList.remove('overflow-hidden');
-                setMessages([]);
                 setMuteMic(false);
                 setIsThinking(false);
                 cleanUpCommonContext();
                 cleanUpSettings();
+                queryClient.invalidateQueries({ queryKey: ['conversations'] });
                 setTimeout(() => {
-                    setConnectionEstablished(false);
-
                     if (videoRef.current) {
                         videoRef.current.srcObject = null;
                     }
@@ -224,10 +245,8 @@ export const InteractiveAvatar: React.FC<{ children?: React.ReactNode }> = ({ ch
                     }
                 }, 10);
             }
-        },
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        [conversations, stopAvatar, stopVoiceChat, handleEndCancelCall, cleanUpCommonContext, cleanUpSettings],
-    );
+        });
+    }, [avatarRef, conversations, stopAvatar, stopVoiceChat, handleEndCancelCall, cleanUpCommonContext, cleanUpSettings, setMessages, sessionId, conversationId, messages, startEndCallTrxn, setIsThinking, queryClient,]);
 
     const handleMute = useCallback(() => {
         setMuteMic(prev => !prev);
@@ -261,7 +280,7 @@ export const InteractiveAvatar: React.FC<{ children?: React.ReactNode }> = ({ ch
         if (sessionState === StreamingAvatarSessionState.INACTIVE && status === 'connected') {
             try {
                 handleStop();
-            } catch {}
+            } catch { }
         }
     }, [sessionState, status, handleStop]);
 
@@ -283,7 +302,6 @@ export const InteractiveAvatar: React.FC<{ children?: React.ReactNode }> = ({ ch
             }
         });
     }, [diagnosis, setDiagnosis]);
-
     return (
         <>
             <Toaster position="top-right" reverseOrder={false} />
@@ -310,7 +328,16 @@ export const InteractiveAvatar: React.FC<{ children?: React.ReactNode }> = ({ ch
                             {isVideoStreamed && (
                                 <div className="actions">
                                     <div className="action-icons">
-                                        <Button label="" backgroundColor="#651C18" onClick={handleEndCall} leftIcon={Disconnect} backgroundColorOnHover="red" id="disconnect-btn" />
+                                        <Button
+                                            label=""
+                                            backgroundColor="#651C18"
+                                            onClick={() => {
+                                                handleEndCall();
+                                            }}
+                                            leftIcon={Disconnect}
+                                            backgroundColorOnHover="red"
+                                            id="disconnect-btn"
+                                        />
                                     </div>
                                     <div className="action-icons">
                                         <Button label="" backgroundColor={'#333537'} onClick={handleMute} leftIcon={!muteMic ? Unmute : Mute} backgroundColorOnHover="gray" id="mute-btn" />
@@ -365,7 +392,7 @@ export const InteractiveAvatar: React.FC<{ children?: React.ReactNode }> = ({ ch
                 onMessage={(m, attachments) => {
                     setIsThinking(true);
                     sendUserMessage(m);
-                    setMessages(prev => [...prev, { message: m, attachments, source: 'user' }]);
+                    setMessages(prev => [...prev, { message: m, attachments, source: 'user', datetime: new Date().toLocaleString() }]);
                 }}
             />
 
@@ -375,7 +402,7 @@ export const InteractiveAvatar: React.FC<{ children?: React.ReactNode }> = ({ ch
                     setIsThinking(true);
                     interrupt();
                     sendUserMessage(m);
-                    setMessages(prev => [...prev, { message: m, attachments, source: 'user' }]);
+                    setMessages(prev => [...prev, { message: m, attachments, source: 'user', datetime: new Date().toLocaleString() }]);
                 }}
                 onContextualUpdate={m => {
                     sendContextualUpdate(m);
@@ -384,7 +411,7 @@ export const InteractiveAvatar: React.FC<{ children?: React.ReactNode }> = ({ ch
             ></MemoizedChatBox>
             {endCallAlert && (
                 <Modal handleModal={handleEndCancelCall} isCloseIcon className="end-call-modal">
-                    <EndCallNotification onCancel={handleEndCancelCall} onEndCall={handleStop} />
+                    <EndCallNotification onCancel={handleEndCancelCall} onEndCall={handleStop} isLoading={isEndCallLoading} />
                 </Modal>
             )}
             {children}

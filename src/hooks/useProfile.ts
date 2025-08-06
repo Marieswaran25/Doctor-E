@@ -1,17 +1,20 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
-import { getMe, GetMeResponse } from '@services/api/auth';
-
-import { useFetch } from './useFetch';
+import { getMe } from '@services/api/auth';
+import { useQuery } from '@tanstack/react-query';
 
 export function useProfile() {
-    const memoizedProfile = useCallback(() => getMe(), []);
-    const [profile, setProfile, error, isLoading] = useFetch(memoizedProfile);
+    const {
+        data: profile,
+        error,
+        isLoading,
+    } = useQuery({
+        queryKey: ['me'],
+        queryFn: getMe,
+    });
 
     return {
         profile,
-        setProfile,
         isLoading,
         error,
     };

@@ -1,0 +1,9 @@
+@use '@theme/colors.module.scss' as *;
+@use '@theme/viewport.scss' as *;
+@use '@theme/common.module.scss' as *;
+@use '@theme/gradient.module.scss' as *;
+
+.conversation-history {
+    width: 100%;
+    @include flex-model(column, flex-start, flex-start, 1.2rem);
+}

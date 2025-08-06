@@ -6,20 +6,20 @@ import { useEffect } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import { InitialGreeting } from '@components/Dashboard/Global/InitialGreeting';
 import { ROUTES } from '@constants/routes';
-import { useAuthContext } from '@hooks/logic/authContext';
 import { useDashboardSettings } from '@hooks/logic/dashboardContext';
+import { useProfile } from '@hooks/useProfile';
 import { Loader } from '@library/Loader';
 import { useRouter } from 'next/navigation';
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
     const { isPageLoading } = useDashboardSettings();
-    const { profile, isLoading: profileLoading, error } = useAuthContext();
+    const { profile, isLoading: profileLoading, error } = useProfile();
     const router = useRouter();
     const { currentTab } = useDashboardSettings();
 
     useEffect(() => {
         if (error && !profile) {
-            toast.error(error || 'Your session has expired. Please login again.', {
+            toast.error(error?.message || 'Your session has expired. Please login again.', {
                 duration: 1000,
             });
             let interval: NodeJS.Timeout | null = null;

@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { InteractiveAvatarContext } from '@hooks/logic/commonContext';
+import { InteractiveAvatarContext } from '@hooks/logic/interactiveAvatarContext';
 
 export const InteractiveAvatarProvider = ({ children }: { children: React.ReactNode }) => {
     const [isTranscriptionOpen, setIsTranscriptionOpen] = React.useState(false);

@@ -1,0 +1,101 @@
+@use '@theme/colors.module.scss' as *;
+@use '@theme/viewport.scss' as *;
+@use '@theme/common.module.scss' as *;
+@use '@theme/gradient.module.scss' as *;
+
+.conversation-outer-wrapper {
+    @include flex-model(column, flex-start, flex-start, 0rem);
+    width: 100%;
+    padding: 1rem;
+    border-radius: 10px;
+    background-color: $B1;
+    cursor: pointer;
+
+    > .conversation-header {
+        @include flex-model(row, center, space-between, 1rem);
+        width: 100%;
+
+        > .conversation-info {
+            @include flex-model(column, flex-start, flex-start, 0.5rem);
+
+            > p {
+                &:hover {
+                    color: $Gray3 !important;
+                }
+            }
+        }
+
+        > svg {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            transition: transform 0.3s ease-in-out;
+
+            > path {
+                fill: black;
+            }
+
+            &.open {
+                transform: rotate(90deg);
+            }
+        }
+    }
+
+    > .conversation-expandable {
+        width: 100%;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-in-out;
+        @include flex-model(column, flex-start, flex-start, 0.5rem);
+
+        &.open {
+            max-height: 1000vh;
+        }
+
+        .message-wrapper {
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            max-width: 75%;
+            line-height: 1.4;
+            margin-top: 0.5rem;
+            @include flex-model(column, flex-start, flex-start, 0.5rem);
+
+            &:first-child {
+                margin-top: 1.5rem;
+            }
+
+            &.ai {
+                background-color: #658192;
+                align-self: flex-start;
+                color: white;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            }
+
+            &.user {
+                background-color: white;
+                align-self: flex-end;
+                border: 1px solid #254156;
+                color: #333;
+            }
+
+            > .message-attachment-wrapper {
+                width: 100%;
+                @include flex-model(column, flex-start, flex-start, 0.5rem);
+
+                > .attached-images {
+                    width: 100%;
+                    @include flex-model(row, center, flex-start, 0.5rem);
+                    flex-wrap: wrap;
+
+                    > img {
+                        width: 70px;
+                        height: 70px;
+                        border-radius: 10px;
+                        border: 1px solid $SilveringGray;
+                        object-fit: cover;
+                    }
+                }
+            }
+        }
+    }
+}

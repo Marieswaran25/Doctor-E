@@ -25,7 +25,7 @@
         width: 80%;
     }
 
-    >.sidebar-header {
+    > .sidebar-header {
         height: 60px;
         width: 100%;
         display: flex;
@@ -68,7 +68,7 @@
         }
     }
 
-    >.sidebar-buttons {
+    > .sidebar-buttons {
         display: flex;
         justify-content: flex-start;
         width: 100%;
@@ -94,7 +94,7 @@
             &:hover {
                 background-color: $Gray2 !important;
 
-                >span {
+                > span {
                     color: white !important;
                 }
             }
@@ -104,8 +104,8 @@
             margin-top: auto;
             margin-bottom: 0.5rem;
 
-            >svg {
-                >path {
+            > svg {
+                > path {
                     fill: $Gray3 !important;
                 }
             }
@@ -113,13 +113,13 @@
             &:hover {
                 background-color: #ff0000;
 
-                >svg {
-                    >path {
+                > svg {
+                    > path {
                         fill: white !important;
                     }
                 }
 
-                >span {
+                > span {
                     color: white !important;
                 }
             }
@@ -128,7 +128,7 @@
         &:hover {
             background-color: $Gray1;
 
-            >span {
+            > span {
                 color: $Gray3 !important;
             }
         }

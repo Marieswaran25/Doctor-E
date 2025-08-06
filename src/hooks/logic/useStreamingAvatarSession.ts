@@ -23,6 +23,8 @@ export const useStreamingAvatarSession = () => {
         handleEndMessage,
         clearMessages,
         messages: avatarMessages,
+        sessionId,
+        setSessionId,
     } = useStreamingAvatarContext();
     const { stopVoiceChat } = useVoiceChat();
     const { sendMessageSync } = useTextChat();
@@ -100,8 +102,13 @@ export const useStreamingAvatarSession = () => {
             avatarRef.current.on(StreamingEvents.USER_END_MESSAGE, handleEndMessage);
             avatarRef.current.on(StreamingEvents.AVATAR_END_MESSAGE, handleEndMessage);
 
-            await avatarRef.current.createStartAvatar(config);
-            return avatarRef.current;
+            const session = await avatarRef.current.createStartAvatar(config);
+            console.log(session);
+            setSessionId(session?.session_id);
+            return {
+                ...avatarRef.current,
+                sessionId: session?.session_id,
+            };
         },
         [
             init,
@@ -116,10 +123,12 @@ export const useStreamingAvatarSession = () => {
             handleStreamingTalkingMessage,
             handleEndMessage,
             setIsAvatarTalking,
+            setSessionId,
         ],
     );
 
     return {
+        sessionId,
         avatarMessages,
         avatarRef,
         sessionState,

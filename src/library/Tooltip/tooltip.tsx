@@ -4,7 +4,16 @@ import './tooltip.scss';
 
 import React, { useRef, useState } from 'react';
 
-const Tooltip = ({ infoText, children, position, className, isLongPressed }: { infoText: string; children: React.ReactNode; position?: string; className?: string; isLongPressed?: boolean }) => {
+interface TooltipProps {
+    infoText: React.ReactNode;
+    children: React.ReactNode;
+    position?: 'top' | 'bottom' | 'left' | 'right';
+    className?: string;
+    isLongPressed?: boolean;
+    backgroundColor?: string;
+}
+
+const Tooltip = ({ infoText, children, position = 'bottom', className, isLongPressed, backgroundColor }: TooltipProps) => {
     const [showTooltip, setShowTooltip] = useState(false);
     const longPressTimeout = useRef<NodeJS.Timeout | null>(null);
 
@@ -63,9 +72,9 @@ const Tooltip = ({ infoText, children, position, className, isLongPressed }: { i
             onTouchEnd={handleTouchEnd}
         >
             {children}
-            <div className={`tooltip ${position || ''} ${showTooltip ? 'open' : ''}`}>
+            <div className={`tooltip ${position || ''} ${showTooltip ? 'open' : ''}`} style={{ backgroundColor: backgroundColor || 'black' }}>
                 {infoText}
-                <div className={`tooltip-arrow ${position || ''}`} />
+                <div className={`tooltip-arrow ${position || ''}`} style={{ '--tooltip-bg': backgroundColor || 'black' } as React.CSSProperties} />
             </div>
         </div>
     );

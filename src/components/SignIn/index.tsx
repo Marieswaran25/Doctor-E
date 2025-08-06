@@ -38,7 +38,7 @@ export const SignIn: React.FC<SignInProps> = ({ children }) => {
                         const { accessToken } = await loginWithGoogle({ code });
                         console.log('next');
                         console.log(accessToken);
-                        sessionStorage.setItem(SessionStorage.ACCESS_TOKEN, accessToken);
+                        localStorage.setItem(SessionStorage.ACCESS_TOKEN, accessToken);
                         console.log('success');
                         router.push(ROUTES.DASHBOARD_CHAT_WITH_DOCTOR);
                     }
@@ -72,7 +72,7 @@ export const SignIn: React.FC<SignInProps> = ({ children }) => {
                 const response = await basicAuthLogin(data);
 
                 if (response.accessToken) {
-                    sessionStorage.setItem(SessionStorage.ACCESS_TOKEN, response.accessToken);
+                    localStorage.setItem(SessionStorage.ACCESS_TOKEN, response.accessToken);
                     reset();
                     router.push(ROUTES.DASHBOARD_CHAT_WITH_DOCTOR);
                 } else {
