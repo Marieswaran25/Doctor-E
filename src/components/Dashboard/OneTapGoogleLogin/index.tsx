@@ -19,7 +19,7 @@ export const OneTapGoogleLogin = ({ startGoogleSignInTrxn }: { startGoogleSignIn
                         console.log(accessToken);
                         setStorageKey(LocalStorage.ACCESS_TOKEN, accessToken);
                         console.log('success');
-                        router.push(ROUTES.DASHBOARD_CHAT_WITH_DOCTOR);
+                        router.push(ROUTES.DASHBOARD);
                     }
                 } catch (error) {
                     console.log(error);

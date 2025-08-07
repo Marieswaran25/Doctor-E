@@ -14,9 +14,9 @@ import { EndCallNotification } from '@components/Dashboard/InteractiveAvatar/End
 import { useConversation } from '@elevenlabs/react';
 import { getAudioStream } from '@helpers/getMediaStream';
 import { AvatarQuality, StartAvatarRequest, VoiceChatTransport } from '@heygen/streaming-avatar';
+import { useDashboardSettings } from '@hooks/contexts/dashboardContext';
 import { StreamingAvatarSessionState, useInterrupt, useStreamingAvatarSession, useVoiceChat } from '@hooks/interactive-avatar';
 import { useStreamingAvatarContext } from '@hooks/interactive-avatar/context';
-import { useDashboardSettings } from '@hooks/interactive-avatar/dashboardContext';
 import { useInteractiveAvatarContext } from '@hooks/interactive-avatar/interactiveAvatarContext';
 import { useConversationMessages } from '@hooks/interactive-avatar/useConversationMessage';
 import { useTextChat } from '@hooks/interactive-avatar/useTextChat';
@@ -382,7 +382,7 @@ export const InteractiveAvatar: React.FC<{ children?: React.ReactNode }> = ({ ch
                             <div className="circular-placeholder-overlay">
                                 {status === 'disconnected' ? (
                                     <Button
-                                        label={<Typography type="p3" text={connectionEstablished || isLoading ? 'Connecting…' : 'Call with Dr. E'} as="span" weight="light" />}
+                                        label={<Typography type="p3" text={connectionEstablished || isLoading ? 'Connecting…' : 'Connect'} as="span" weight="light" />}
                                         backgroundColor="white"
                                         onClick={handleStart}
                                         leftIcon={Voice}

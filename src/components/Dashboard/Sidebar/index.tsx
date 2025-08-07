@@ -10,7 +10,7 @@ import HomeIcon from '@assets/icons/sidebar/home.svg';
 import Logout from '@assets/icons/sidebar/logout.svg';
 import YourReports from '@assets/icons/sidebar/reports.svg';
 import { ROUTES } from '@constants/routes';
-import { useDashboardSettings } from '@hooks/interactive-avatar/dashboardContext';
+import { DashboardTabs, useDashboardSettings } from '@hooks/contexts/dashboardContext';
 import { useNavigation } from '@hooks/useNavigation';
 import { useProfile } from '@hooks/useProfile';
 import { Button } from '@library/Button';
@@ -23,10 +23,10 @@ import { usePathname } from 'next/navigation';
 import { unAuthorizedEvent } from '@/config';
 
 const menuItem = [
-    { label: 'Chat With Doctor', icon: HomeIcon, path: ROUTES.DASHBOARD_CHAT_WITH_DOCTOR },
-    { label: 'Chat History', icon: ChatHistory, path: ROUTES.DASHBOARD_CHAT_HISTORY },
-    { label: 'Your Reports', icon: YourReports, path: ROUTES.DASHBOARD_YOUR_REPORTS },
-    { label: 'Dental Education', icon: Education, path: ROUTES.DASHBOARD_DENTAL_EDUCATION },
+    { label: DashboardTabs.CHAT_WITH_DOCTOR, icon: HomeIcon, path: ROUTES.DASHBOARD_CHAT_WITH_DOCTOR },
+    { label: DashboardTabs.CHAT_HISTORY, icon: ChatHistory, path: ROUTES.DASHBOARD_CHAT_HISTORY },
+    { label: DashboardTabs.YOUR_REPORTS, icon: YourReports, path: ROUTES.DASHBOARD_YOUR_REPORTS },
+    { label: DashboardTabs.DENTAL_EDUCATION, icon: Education, path: ROUTES.DASHBOARD_DENTAL_EDUCATION },
     { label: 'Logout', icon: Logout, path: 'logout' },
 ];
 
@@ -73,7 +73,20 @@ export const Sidebar = () => {
         <>
             <div className={`sidebar ${activeSidebar ? 'open' : ''}`}>
                 <div className="sidebar-header">
-                    <Image src={logo} alt="logo" width={60} height={60} object-fit="contain" border-radius="4px" />
+                    <Image
+                        src={logo}
+                        alt="logo"
+                        width={60}
+                        height={60}
+                        object-fit="contain"
+                        border-radius="4px"
+                        onClick={() => {
+                            setCurrentTab(DashboardTabs.HOME);
+                            router.push(ROUTES.DASHBOARD);
+                            setActiveSidebar(false);
+                        }}
+                        style={{ cursor: 'pointer' }}
+                    />
                     <Button color="#005b8f" label={''} onClick={() => setActiveSidebar(!activeSidebar)} backgroundColor="transparent" leftIcon={Close} />
                 </div>
                 {menuItem.map((item, index) => (

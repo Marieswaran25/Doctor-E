@@ -4,6 +4,8 @@
 @use '@theme/gradient.module.scss' as *;
 
 .greeting {
+    @include flex-model(column, flex-start, flex-start, 0.5rem);
+
     > h6 {
         text-wrap: balance;
         word-break: break-word;

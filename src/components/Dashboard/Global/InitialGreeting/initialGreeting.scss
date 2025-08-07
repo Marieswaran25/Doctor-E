@@ -7,6 +7,12 @@
     @include flex-model(column, flex-start, flex-start, 1.2rem);
     padding: 0 5rem !important;
 
+    > .dashboard-breadCrumbs {
+        @include tablet {
+            display: none;
+        }
+    }
+
     @include tablet {
         padding: 0 1rem !important;
     }

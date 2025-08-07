@@ -19,6 +19,10 @@
             @include flex-model(column, flex-start, flex-start, 0.5rem);
 
             > p {
+                @include mobile {
+                    font-size: 0.9rem;
+                }
+
                 &:hover {
                     color: $Gray3 !important;
                 }

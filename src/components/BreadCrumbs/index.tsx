@@ -6,7 +6,10 @@ import RightArrow from '@assets/icons/rightArrow.svg';
 import Typography from '@library/Typography';
 
 type BreadCrumbsProps = {
-    items: string[];
+    items: {
+        value: string;
+        onClick?: () => void;
+    }[];
     className?: string;
     style?: React.CSSProperties;
 };
@@ -16,7 +19,16 @@ export const BreadCrumbs: React.FC<BreadCrumbsProps> = ({ items, className, styl
         <div className={`breadCrumbs ${className ?? ''}`} style={style}>
             {items.map((item, index, arr) => (
                 <Fragment key={index}>
-                    <Typography key={index} type="caption" weight="light" text={item} as="span" color={index === arr.length - 1 ? colors.Gray3 : 'gray'} />
+                    <Typography
+                        key={index}
+                        type="caption"
+                        weight="light"
+                        text={item.value}
+                        as="span"
+                        color={index === arr.length - 1 ? colors.Gray3 : 'gray'}
+                        onClick={item.onClick}
+                        style={{ cursor: 'pointer' }}
+                    />
                     {index !== arr.length - 1 && <RightArrow />}
                 </Fragment>
             ))}

@@ -1,0 +1,76 @@
+@use '@theme/colors.module.scss' as *;
+@use '@theme/viewport.scss' as *;
+@use '@theme/common.module.scss' as *;
+@use '@theme/gradient.module.scss' as *;
+
+.navigation-menu-items-wrapper {
+    margin-top: 1rem;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    column-gap: 1rem;
+    row-gap: 3rem;
+    align-items: center;
+    place-items: center;
+    justify-content: center;
+
+    @include tablet {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    > .navigation-menu-item {
+        @include flex-model(column, center, space-between, 0.5rem);
+        cursor: pointer;
+        transition: transform 0.3s ease-in-out;
+        min-height: 80px;
+
+        &:hover {
+            transform: scale(1.1);
+        }
+
+        > img {
+            width: 55px;
+            height: 55px;
+            object-fit: cover;
+            border-radius: 8px;
+
+            @include mobile {
+                width: 50px;
+                height: 50px;
+            }
+
+            &:hover {
+                animation: tilt 0.5s ease-in-out;
+            }
+        }
+
+        > small {
+            text-align: center;
+        }
+
+        > p {
+            font-style: italic;
+        }
+    }
+}
+
+@keyframes tilt {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    25% {
+        transform: rotate(5deg);
+    }
+
+    50% {
+        transform: rotate(0deg);
+    }
+
+    75% {
+        transform: rotate(-5deg);
+    }
+
+    100% {
+        transform: rotate(0deg);
+    }
+}

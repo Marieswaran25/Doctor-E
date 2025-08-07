@@ -6,13 +6,16 @@ import { Greeting } from '@components/Dashboard/Global/Greeting';
 import { View } from '@library/View';
 
 type InitialGreetingProps = {
-    items: string[];
+    items: {
+        value: string;
+        onClick?: () => void;
+    }[];
 };
 
 export const InitialGreeting = ({ items }: InitialGreetingProps) => {
     return (
         <View className="initial-greeting">
-            <BreadCrumbs items={items} />
+            <BreadCrumbs items={items} className="dashboard-breadCrumbs" />
             <Greeting />
         </View>
     );

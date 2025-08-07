@@ -7,7 +7,13 @@ export const useNavigation = () => {
     const push = (r: ROUTES | string, query?: Array<Record<string, string>>) => {
         if (!query) return router.push(r);
         else {
-            const concatenatedQuery = query.map((q) => Object.entries(q).map(([key, value]) => `${key}=${value}`).join('&')).join('&');
+            const concatenatedQuery = query
+                .map(q =>
+                    Object.entries(q)
+                        .map(([key, value]) => `${key}=${value}`)
+                        .join('&'),
+                )
+                .join('&');
             return router.push(`${r}?${concatenatedQuery}`);
         }
     };
@@ -15,7 +21,13 @@ export const useNavigation = () => {
     const replace = (r: ROUTES | string, query?: Array<Record<string, string>>) => {
         if (!query) return router.replace(r);
         else {
-            const concatenatedQuery = query.map((q) => Object.entries(q).map(([key, value]) => `${key}=${value}`).join('&')).join('&');
+            const concatenatedQuery = query
+                .map(q =>
+                    Object.entries(q)
+                        .map(([key, value]) => `${key}=${value}`)
+                        .join('&'),
+                )
+                .join('&');
             return router.push(`${r}?${concatenatedQuery}`);
         }
     };

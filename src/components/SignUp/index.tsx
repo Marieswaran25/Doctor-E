@@ -39,7 +39,7 @@ export const SignUp: React.FC<{ children?: React.ReactNode }> = ({ children }) =
                         console.log(accessToken);
                         setStorageKey(LocalStorage.ACCESS_TOKEN, accessToken);
                         console.log('success');
-                        router.push(ROUTES.DASHBOARD_CHAT_WITH_DOCTOR);
+                        router.push(ROUTES.DASHBOARD);
                     }
                 } catch (error) {
                     console.log(error);
@@ -75,7 +75,7 @@ export const SignUp: React.FC<{ children?: React.ReactNode }> = ({ children }) =
                 if (response.accessToken) {
                     setStorageKey(LocalStorage.ACCESS_TOKEN, response.accessToken);
                     reset();
-                    router.push(ROUTES.DASHBOARD_CHAT_WITH_DOCTOR);
+                    router.push(ROUTES.DASHBOARD);
                 } else {
                     console.log(response);
                     setError('root', { message: 'cannot create account' });

@@ -1,16 +1,16 @@
 'use client';
 import React from 'react';
-import { DashboardContext } from '@hooks/interactive-avatar/dashboardContext';
+import { DashboardContext, DashboardTabs } from '@hooks/contexts/dashboardContext';
 
 export const SettingsProvider = ({ children }: { children: React.ReactNode }) => {
     const [theme, setTheme] = React.useState<'light' | 'dark'>('light');
     const [isSideBarOpen, setIsSideBarOpen] = React.useState(false);
-    const [currentTab, setCurrentTab] = React.useState('Chat with Doctor');
+    const [currentTab, setCurrentTab] = React.useState<DashboardTabs | string>(DashboardTabs.HOME);
     const [isPageLoading, startPageTransition] = React.useTransition();
 
     const clearSettings = () => {
         setIsSideBarOpen(false);
-        setCurrentTab('Chat with Doctor');
+        setCurrentTab(DashboardTabs.HOME);
     };
 
     return (
