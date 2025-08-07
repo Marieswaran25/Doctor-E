@@ -60,8 +60,7 @@ CustomAxios.interceptors.response.use(
             } catch (refreshError) {
                 removeStorageKey(LocalStorage.ACCESS_TOKEN);
                 if (typeof window !== 'undefined') {
-                    alert('Your session has expired. Please login again.');
-                    window.location.href = ROUTES.SIGN_IN;
+                    window.dispatchEvent(new CustomEvent(unAuthorizedEvent));
                 }
             }
         }
